@@ -1,0 +1,443 @@
+import { a as __toESM } from "./_runtime.mjs";
+import { n as require_jsx_runtime } from "./_libs/react+tanstack__react-query.mjs";
+import { a as StatusPill, n as PageHeader } from "./_ssr/primitives-MhefxCVw.mjs";
+import { H as require_react, N as s, O as n, p as f, t as n$1 } from "./_libs/phosphor-icons__react+react.mjs";
+import { t as useWorkspace } from "./_ssr/store-CDVs1vNK.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/_app.logs-oqqLGrik.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_jsx_runtime = require_jsx_runtime();
+var WORKSPACE_LOGS = {
+	"Personal workspace": [
+		{
+			id: "f2a2d8f3-eec7-46de-a74e-ebd287c13b50",
+			ago: "3m ago",
+			source: "API Key",
+			model: "silk muga 1",
+			key: "prod-key-01",
+			tokIn: 76,
+			tokOut: 110,
+			credits: .12,
+			status: 200,
+			text: "Good morning! Setting focus mode for next hour."
+		},
+		{
+			id: "bfdbdd52-1775-464a-bd5e-5c2b0a2f1580",
+			ago: "14m ago",
+			source: "API Key",
+			model: "silk mulberry 1.5",
+			key: "prod-key-01",
+			tokIn: 184,
+			tokOut: 240,
+			credits: .28,
+			status: 200,
+			text: "Introduced by the Acme group. A live sample readout."
+		},
+		{
+			id: "4a21f99f-760d-4d54-a4aa-bb31f1dbff38",
+			ago: "1h ago",
+			source: "Playground",
+			model: "silk muga 1",
+			key: "default",
+			tokIn: 64,
+			tokOut: 90,
+			credits: .12,
+			status: 200,
+			text: "Testing custom emotion tag insertion here."
+		},
+		{
+			id: "3f82e8f1-eec7-46de-a74e-ebd287c13b29",
+			ago: "2h ago",
+			source: "API Key",
+			model: "silk muga 1",
+			key: "dev-key-02",
+			tokIn: 76,
+			tokOut: 110,
+			credits: .12,
+			status: 200,
+			text: "Testing sandbox connectivity rate metrics."
+		},
+		{
+			id: "7a21d8a2-760d-4d54-a4aa-bb31f1dbff01",
+			ago: "4h ago",
+			source: "API Key",
+			model: "silk muga 1",
+			key: "prod-key-01",
+			tokIn: 120,
+			tokOut: 0,
+			credits: 0,
+			status: 500,
+			text: "System connection reset from client peer node."
+		}
+	],
+	"Acme Studio": [
+		{
+			id: "9a8b7c6d-eec7-46de-a74e-ebd287c13b01",
+			ago: "1m ago",
+			source: "API Key",
+			model: "silk muga 1",
+			key: "acme-live-api",
+			tokIn: 145,
+			tokOut: 200,
+			credits: .12,
+			status: 200,
+			text: "Acme Production Loop initialized."
+		},
+		{
+			id: "8f7e6d5c-1775-464a-bd5e-5c2b0a2f1580",
+			ago: "4m ago",
+			source: "API Key",
+			model: "silk muga 1",
+			key: "acme-live-api",
+			tokIn: 92,
+			tokOut: 120,
+			credits: .12,
+			status: 200,
+			text: "Telemetry diagnostics active."
+		},
+		{
+			id: "7d6c5b4a-760d-4d54-a4aa-bb31f1dbff38",
+			ago: "8m ago",
+			source: "API Key",
+			model: "silk mulberry 1.5",
+			key: "staging-webhook",
+			tokIn: 240,
+			tokOut: 310,
+			credits: .28,
+			status: 200,
+			text: "Webhook receiver payload processed successfully."
+		}
+	],
+	Lab: [{
+		id: "1a2b3c4d-eec7-46de-a74e-ebd287c13b02",
+		ago: "1h ago",
+		source: "API Key",
+		model: "silk muga 1",
+		key: "scratchpad-temp",
+		tokIn: 48,
+		tokOut: 70,
+		credits: .12,
+		status: 200,
+		text: "Quick scratch test."
+	}, {
+		id: "2b3c4d5e-1775-464a-bd5e-5c2b0a2f1580",
+		ago: "4h ago",
+		source: "API Key",
+		model: "silk muga 1",
+		key: "scratchpad-temp",
+		tokIn: 55,
+		tokOut: 80,
+		credits: .12,
+		status: 200,
+		text: "Verify playground response metrics."
+	}]
+};
+var SEED_LOGS = WORKSPACE_LOGS["Personal workspace"];
+function Logs() {
+	const rawLogs = WORKSPACE_LOGS[useWorkspace()] || SEED_LOGS;
+	const [search, setSearch] = (0, import_react.useState)("");
+	const [openId, setOpenId] = (0, import_react.useState)(null);
+	const [codeExpanded, setCodeExpanded] = (0, import_react.useState)(false);
+	const panelRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		function handleOutsideClick(e) {
+			if (panelRef.current && !panelRef.current.contains(e.target)) {
+				if (!e.target.closest("[data-log-row]")) setOpenId(null);
+			}
+		}
+		if (openId) document.addEventListener("mousedown", handleOutsideClick);
+		return () => document.removeEventListener("mousedown", handleOutsideClick);
+	}, [openId]);
+	const [modelFilter, setModelFilter] = (0, import_react.useState)(null);
+	const [keyFilter, setKeyFilter] = (0, import_react.useState)(null);
+	const [statusFilter, setStatusFilter] = (0, import_react.useState)(null);
+	const [filterMenu, setFilterMenu] = (0, import_react.useState)(null);
+	const open = rawLogs.find((l) => l.id === openId);
+	const models = Array.from(new Set(rawLogs.map((l) => l.model)));
+	const keys = Array.from(new Set(rawLogs.map((l) => l.key)));
+	const statuses = Array.from(new Set(rawLogs.map((l) => l.status)));
+	const filteredLogs = rawLogs.filter((l) => {
+		const matchesSearch = l.id.toLowerCase().includes(search.toLowerCase()) || l.model.toLowerCase().includes(search.toLowerCase()) || l.text.toLowerCase().includes(search.toLowerCase());
+		const matchesModel = !modelFilter || l.model === modelFilter;
+		const matchesKey = !keyFilter || l.key === keyFilter;
+		const matchesStatus = !statusFilter || l.status === statusFilter;
+		return matchesSearch && matchesModel && matchesKey && matchesStatus;
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageHeader, {
+			eyebrow: "Develop",
+			title: "Logs",
+			subtitle: "A ledger of every synthesis request — searchable and inspectable."
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "sticky top-14 z-[5] -mx-3 mb-2 flex items-center gap-2 bg-background/85 px-3 py-3 backdrop-blur-md hairline-b",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex h-8 flex-1 items-center gap-2 rounded-md bg-[var(--inset)] px-2.5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(f, {
+						size: 14,
+						className: "text-muted-foreground"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						value: search,
+						onChange: (e) => setSearch(e.target.value),
+						placeholder: "Search by request ID, model, or text",
+						className: "flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-muted-foreground/60"
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setFilterMenu(filterMenu === "model" ? null : "model"),
+						className: `inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[12px] transition-colors ${modelFilter ? "bg-foreground text-background font-semibold" : "bg-[var(--inset)] text-muted-foreground hover:text-foreground"}`,
+						children: [modelFilter || "Model", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(s, {
+							className: "opacity-60",
+							size: 13
+						})]
+					}), filterMenu === "model" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "absolute right-0 mt-1.5 z-20 w-44 rounded-lg border border-border bg-background p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)] pop-in",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setModelFilter(null);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: ["All models", !modelFilter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}), models.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setModelFilter(m);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: [m, modelFilter === m && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}, m))]
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setFilterMenu(filterMenu === "key" ? null : "key"),
+						className: `inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[12px] transition-colors ${keyFilter ? "bg-foreground text-background font-semibold" : "bg-[var(--inset)] text-muted-foreground hover:text-foreground"}`,
+						children: [keyFilter || "Key", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(s, {
+							className: "opacity-60",
+							size: 13
+						})]
+					}), filterMenu === "key" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "absolute right-0 mt-1.5 z-20 w-44 rounded-lg border border-border bg-background p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)] pop-in",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setKeyFilter(null);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: ["All keys", !keyFilter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}), keys.map((k) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setKeyFilter(k);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: [k, keyFilter === k && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}, k))]
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setFilterMenu(filterMenu === "status" ? null : "status"),
+						className: `inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[12px] transition-colors ${statusFilter ? "bg-foreground text-background font-semibold" : "bg-[var(--inset)] text-muted-foreground hover:text-foreground"}`,
+						children: [statusFilter ? `${statusFilter}` : "Status", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(s, {
+							className: "opacity-60",
+							size: 13
+						})]
+					}), filterMenu === "status" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "absolute right-0 mt-1.5 z-20 w-36 rounded-lg border border-border bg-background p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)] pop-in",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setStatusFilter(null);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: ["All statuses", !statusFilter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}), statuses.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setStatusFilter(s);
+								setFilterMenu(null);
+							},
+							className: "flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-[12px] hover:bg-[var(--inset)]",
+							children: [s, statusFilter === s && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, { size: 12 })]
+						}, s))]
+					})]
+				})
+			]
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "-mx-3 fade-mask-y animate-fade-in",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "grid grid-cols-[110px_110px_140px_1fr_90px_70px_60px] gap-5 px-3 pb-2 eyebrow-label",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Time" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Source" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Model" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Request ID" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Tokens" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Credits" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Status" })
+					]
+				}),
+				filteredLogs.map((l) => {
+					const isOk = l.status === 200;
+					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						"data-log-row": true,
+						onClick: () => {
+							setOpenId(l.id);
+							setCodeExpanded(false);
+						},
+						className: `grid w-full grid-cols-[110px_110px_140px_1fr_90px_70px_60px] items-center gap-5 rounded-md px-3 py-3 text-left transition-colors ${openId === l.id ? "bg-[var(--inset)]" : "row-hover"}`,
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[12.5px] text-muted-foreground",
+								children: l.ago
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[12.5px] text-muted-foreground",
+								children: l.source
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-mono text-[12px] text-foreground/90",
+								children: l.model
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate font-mono text-[12px] text-muted-foreground",
+								children: l.id
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "font-mono text-[12px] tabular-nums text-muted-foreground",
+								children: [
+									l.tokIn,
+									" / ",
+									l.tokOut
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-mono text-[12px] tabular-nums text-muted-foreground",
+								children: l.credits > 0 ? l.credits.toFixed(2) : "—"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-16",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusPill, {
+									tone: isOk ? "success" : "warn",
+									dot: true,
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "font-display tabular-nums text-[10.5px]",
+										children: l.status
+									})
+								})
+							})
+						]
+					}, l.id);
+				}),
+				filteredLogs.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "py-20 text-center text-[13.5px] text-muted-foreground font-display",
+					children: "No logs match the selected filters."
+				})
+			]
+		}),
+		open ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			ref: panelRef,
+			className: "fixed inset-y-0 right-0 z-30 flex w-[440px] flex-col bg-background border-l border-border/80 shadow-[-12px_0_40px_-20px_rgba(0,0,0,0.18)] animate-slide-in-right",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center justify-between px-6 py-4.5 border-b border-border/40",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "min-w-0",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "eyebrow-label",
+						children: "Request detail"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "mt-1 truncate font-mono text-[12px] text-muted-foreground",
+						children: open.id
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					type: "button",
+					onClick: (e) => {
+						e.stopPropagation();
+						setOpenId(null);
+					},
+					className: "grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.95]",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n$1, { size: 15 })
+				})]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex-1 overflow-y-auto px-6 py-6 space-y-6",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Block, {
+						title: "Request metadata",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								k: "Time",
+								v: open.ago
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								k: "Integration key",
+								v: open.key
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+								k: "Input volume",
+								v: `${open.tokIn} characters`
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Block, {
+						title: "Request payload body",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "relative",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: `rounded-md bg-[var(--inset)] p-3 font-mono text-[11.5px] leading-relaxed text-foreground/85 transition-all duration-200 overflow-x-auto ${codeExpanded ? "max-h-none" : "max-h-[135px] overflow-hidden"}`,
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("pre", { children: `{
+  "model": "${open.model}",
+  "text": "${open.text}",
+  "temperature": 0.70,
+  "top_p": 0.95,
+  "max_tokens": 2048
+}` })
+							}), !codeExpanded && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-background to-transparent pointer-events-none" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								onClick: () => setCodeExpanded(true),
+								className: "absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded bg-foreground px-2.5 py-1 text-[11.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-75 shadow-sm",
+								children: "More"
+							})] })]
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Block, {
+						title: "Response parameters",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+							k: "Status code",
+							v: `${open.status} ${open.status === 200 ? "OK" : "ERROR"}`
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+							k: "Cost accrued",
+							v: `${open.credits > 0 ? `${open.credits.toFixed(2)} credits` : "—"}`
+						})]
+					})
+				]
+			})]
+		}) : null
+	] });
+}
+function Block({ title, children }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "mb-2 eyebrow-label",
+		children: title
+	}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children })] });
+}
+function Field({ k, v }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex items-baseline justify-between gap-4 py-2 hairline-b last:border-b-0",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			className: "font-mono text-[11.5px] text-muted-foreground",
+			children: k
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			className: "truncate font-display text-[12.5px] text-foreground/90 font-medium",
+			children: v
+		})]
+	});
+}
+//#endregion
+export { Logs as component };

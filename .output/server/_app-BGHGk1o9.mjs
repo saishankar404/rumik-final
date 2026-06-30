@@ -1,0 +1,512 @@
+import { a as __toESM } from "./_runtime.mjs";
+import { n as require_jsx_runtime } from "./_libs/react+tanstack__react-query.mjs";
+import { t as Kbd } from "./_ssr/primitives-MhefxCVw.mjs";
+import { A as n$3, D as s$1, F as c$4, H as require_react, O as n$5, R as c$2, T as c, _ as n$2, c as s, g as c$1, i as s$3, j as c$3, n as n$1, o as n, p as f, t as n$7, v as n$6, w as n$4, z as s$2 } from "./_libs/phosphor-icons__react+react.mjs";
+import { n as workspaceStore, t as useWorkspace } from "./_ssr/store-CDVs1vNK.mjs";
+import { a as useRouterState, c as Outlet, f as Link, p as useNavigate } from "./_libs/@tanstack/react-router+[...].mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/_app-BGHGk1o9.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_jsx_runtime = require_jsx_runtime();
+var NAV = [
+	{
+		label: "Workspace",
+		items: [{
+			to: "/",
+			label: "Overview",
+			icon: n,
+			hint: "G O"
+		}, {
+			to: "/playground",
+			label: "Playground",
+			icon: n$1,
+			hint: "G P"
+		}]
+	},
+	{
+		label: "Develop",
+		items: [
+			{
+				to: "/api-keys",
+				label: "API keys",
+				icon: n$2
+			},
+			{
+				to: "/usage",
+				label: "Usage",
+				icon: n$3
+			},
+			{
+				to: "/logs",
+				label: "Logs",
+				icon: s
+			},
+			{
+				to: "/models",
+				label: "Models",
+				icon: n$4
+			}
+		]
+	},
+	{
+		label: "Account",
+		items: [
+			{
+				to: "/billing",
+				label: "Billing",
+				icon: c
+			},
+			{
+				to: "/support",
+				label: "Support",
+				icon: c$1
+			},
+			{
+				to: "/docs",
+				label: "Docs",
+				icon: c$2
+			}
+		]
+	}
+];
+function AppShell() {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const isPlayground = pathname === "/playground" || pathname.startsWith("/playground/");
+	const [cmdOpen, setCmdOpen] = (0, import_react.useState)(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex min-h-screen w-full bg-background text-foreground",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sidebar, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex min-w-0 flex-1 flex-col",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Topbar, { onSearchClick: () => setCmdOpen(true) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
+					className: "relative flex-1 flex flex-col",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(NoiseOverlay, {}), isPlayground ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "flex-1 min-h-0 flex flex-col animate-page-fade",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {})
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "mx-auto w-full max-w-[1100px] px-10 pb-24 pt-12 animate-page-fade",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {})
+					})]
+				})]
+			}),
+			cmdOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
+				onClose: () => setCmdOpen(false),
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CommandPalette, { onClose: () => setCmdOpen(false) })
+			})
+		]
+	});
+}
+function NoiseOverlay() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		"aria-hidden": true,
+		className: "pointer-events-none absolute inset-0 opacity-[0.025] mix-blend-multiply",
+		style: { backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")" }
+	});
+}
+function Dialog({ children, onClose }) {
+	(0, import_react.useEffect)(() => {
+		function onKeyDown(e) {
+			if (e.key === "Escape") onClose();
+		}
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [onClose]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "fixed inset-0 z-50 flex items-center justify-center p-4",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			onClick: onClose,
+			className: "absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-200 animate-fade-in"
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "relative w-full max-w-[860px] -translate-y-6 rounded-xl border border-border/80 bg-background p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] pop-in overflow-hidden z-10",
+			children
+		})]
+	});
+}
+function Sidebar() {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const ws = useWorkspace();
+	const [wsOpen, setWsOpen] = (0, import_react.useState)(false);
+	const wsRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		function onClick(e) {
+			if (!wsRef.current?.contains(e.target)) setWsOpen(false);
+		}
+		document.addEventListener("mousedown", onClick);
+		return () => document.removeEventListener("mousedown", onClick);
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
+		className: "sticky top-0 flex h-screen w-[244px] shrink-0 flex-col bg-[var(--sidebar)] hairline-b border-b-0 border-r",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				ref: wsRef,
+				className: "relative px-3 pt-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					onClick: () => setWsOpen((v) => !v),
+					className: "flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-[var(--sidebar-accent)]/70 animate-fade-in",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "grid h-7 w-7 place-items-center rounded-md bg-foreground text-background",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-display text-[12px] font-semibold",
+								children: ws === "Personal workspace" ? "P" : ws === "Acme Studio" ? "A" : "L"
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "min-w-0 flex-1 leading-tight",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "truncate font-display text-[13.5px] font-semibold",
+								children: "Rumik"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "truncate text-[11px] text-muted-foreground",
+								children: ws
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(c$3, {
+							size: 14,
+							className: "text-muted-foreground/75 shrink-0"
+						})
+					]
+				}), wsOpen ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "absolute left-3 right-3 top-[calc(100%+4px)] z-20 rounded-lg border border-border bg-background p-1.5 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.25)] pop-in",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "px-2 pb-1.5 pt-1 font-display text-[10.5px] font-medium tracking-tight text-muted-foreground/80",
+						children: "Switch workspace"
+					}), [
+						{
+							name: "Personal workspace",
+							hint: "shred@rumik.ai"
+						},
+						{
+							name: "Acme Studio",
+							hint: "team — 4 members"
+						},
+						{
+							name: "Lab",
+							hint: "scratchpad"
+						}
+					].map((w) => {
+						const active = w.name === ws;
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								workspaceStore.setWorkspace(w.name);
+								setWsOpen(false);
+							},
+							className: "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--inset)] active:scale-[0.98]",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "grid h-6 w-6 place-items-center rounded bg-[var(--inset)] text-muted-foreground",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(c$4, { size: 14 })
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+									className: "min-w-0 flex-1 leading-tight",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "block truncate text-[12.5px] text-foreground",
+										children: w.name
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "block truncate text-[10.5px] text-muted-foreground",
+										children: w.hint
+									})]
+								}),
+								active ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n$5, {
+									size: 14,
+									className: "text-foreground shrink-0"
+								}) : null
+							]
+						}, w.name);
+					})]
+				}) : null]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", {
+				className: "mt-2 flex-1 overflow-y-auto px-3 pb-6 fade-mask-y animate-fade-in",
+				children: NAV.map((group) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mb-5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "px-3 pb-2 pt-3 font-display text-[11px] font-medium tracking-tight text-muted-foreground/70",
+						children: group.label
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+						className: "space-y-0.5",
+						children: group.items.map((item) => {
+							const active = item.to === "/" ? pathname === "/" : pathname === item.to || pathname.startsWith(item.to + "/");
+							const Icon = item.icon;
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
+								to: item.to,
+								className: `group relative flex items-center gap-2.5 rounded-md px-3 py-[7px] text-[13px] transition-all duration-150 ${active ? "bg-[var(--sidebar-accent)] text-foreground" : "text-muted-foreground hover:bg-[var(--sidebar-accent)]/60 hover:text-foreground"}`,
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+									size: 15,
+									className: `transition-colors ${active ? "text-foreground" : "text-muted-foreground/75 group-hover:text-foreground"}`
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "flex-1 truncate",
+									children: item.label
+								})]
+							}) }, item.to);
+						})
+					})]
+				}, group.label))
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "hairline-t mx-3 mb-3 mt-1 flex items-center gap-2.5 rounded-md border-0 px-2 py-2.5",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "grid h-7 w-7 place-items-center rounded-full bg-foreground/90 text-[11px] font-semibold text-background",
+						children: "S"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "min-w-0 flex-1 leading-tight",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "truncate text-[12.5px] font-medium",
+							children: "Shred"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "truncate text-[11px] text-muted-foreground",
+							children: "shred@rumik.ai"
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "rounded-full bg-[var(--success-soft)] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider text-[var(--success)]",
+						children: "Pro"
+					})
+				]
+			})
+		]
+	});
+}
+function Topbar({ onSearchClick }) {
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const [notifOpen, setNotifOpen] = (0, import_react.useState)(false);
+	const bellRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		function handleOutside(e) {
+			if (bellRef.current && !bellRef.current.contains(e.target)) setNotifOpen(false);
+		}
+		document.addEventListener("mousedown", handleOutside);
+		return () => document.removeEventListener("mousedown", handleOutside);
+	}, []);
+	(0, import_react.useEffect)(() => {
+		function onKey(e) {
+			if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+				e.preventDefault();
+				onSearchClick();
+			}
+		}
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [onSearchClick]);
+	const crumb = NAV.flatMap((g) => g.items).find((i) => i.to === "/" ? pathname === "/" : pathname.startsWith(i.to))?.label ?? "Overview";
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+		className: "sticky top-0 z-10 flex h-14 items-center gap-3 bg-background/80 px-8 backdrop-blur-md hairline-b",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center gap-2 text-[13px] text-muted-foreground",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Rumik" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "text-border",
+						children: "/"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "font-display text-foreground",
+						children: crumb
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+				onClick: onSearchClick,
+				className: "ml-6 flex h-8 items-center gap-2 rounded-md px-2.5 text-[12.5px] text-muted-foreground bg-[var(--inset)] hover:bg-[var(--inset)]/75 transition-colors text-left w-[280px] active:scale-[0.99]",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(f, {
+						size: 14,
+						className: "text-muted-foreground/60 shrink-0"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "flex-1 text-muted-foreground/60",
+						children: "Search models, logs, keys…"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "flex shrink-0 items-center gap-1",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Kbd, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(s$1, { className: "h-2.5 w-2.5" }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Kbd, { children: "K" })]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "ml-auto flex items-center gap-1.5",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						ref: bellRef,
+						className: "relative",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							onClick: () => setNotifOpen(!notifOpen),
+							className: `grid h-8 w-8 place-items-center rounded-md transition-colors active:scale-[0.96] ${notifOpen ? "bg-[var(--inset)] text-foreground" : "text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground"}`,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(s$2, { size: 15 })
+						}), notifOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "absolute right-0 mt-2 z-40 w-80 rounded-lg border border-border bg-background p-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.16)] pop-in",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NotificationPanel, { onClose: () => setNotifOpen(false) })
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mx-2 h-5 w-px bg-border" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center gap-2 rounded-md bg-[var(--inset)] px-2.5 py-1 select-none pointer-events-none",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "h-1.5 w-1.5 rounded-full bg-[var(--success)]" }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "font-display text-[12px] font-medium tabular-nums",
+								children: "1,024"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[11.5px] text-muted-foreground",
+								children: "credits"
+							})
+						]
+					})
+				]
+			})
+		]
+	});
+}
+function CommandPalette({ onClose }) {
+	const navigate = useNavigate();
+	const [query, setQuery] = (0, import_react.useState)("");
+	const inputRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		inputRef.current?.focus();
+	}, []);
+	const filtered = [
+		{
+			label: "Overview dashboard",
+			icon: n,
+			action: () => navigate({ to: "/" })
+		},
+		{
+			label: "Synthesize voice playground",
+			icon: n$1,
+			action: () => navigate({ to: "/playground" })
+		},
+		{
+			label: "API configuration keys",
+			icon: n$2,
+			action: () => navigate({ to: "/api-keys" })
+		},
+		{
+			label: "Top up credit balance",
+			icon: s$3,
+			action: () => navigate({ to: "/billing" })
+		},
+		{
+			label: "Models configuration catalog",
+			icon: n$6,
+			action: () => navigate({ to: "/models" })
+		},
+		{
+			label: "API documentation",
+			icon: c$2,
+			action: () => navigate({ to: "/docs" })
+		}
+	].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex flex-col",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "flex items-center gap-3 px-4 py-3.5 border-b border-border/40",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(f, {
+					size: 18,
+					className: "text-muted-foreground/60 shrink-0"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+					ref: inputRef,
+					value: query,
+					onChange: (e) => setQuery(e.target.value),
+					placeholder: "Where would you like to go?",
+					className: "flex-1 bg-transparent text-[16px] outline-none placeholder:text-muted-foreground/40"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					onClick: onClose,
+					className: "rounded p-1 text-muted-foreground/60 hover:bg-[var(--inset)] hover:text-foreground",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n$7, { size: 15 })
+				})
+			]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "p-1.5 max-h-[420px] overflow-y-auto",
+			children: [filtered.map((item, idx) => {
+				const Icon = item.icon;
+				return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					onClick: () => {
+						item.action();
+						onClose();
+					},
+					className: "flex w-full items-center gap-3.5 rounded-lg px-4 py-3 text-left text-[15px] hover:bg-[var(--inset)] transition-colors duration-75 active:scale-[0.99]",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+							size: 17,
+							className: "text-muted-foreground/60 shrink-0"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "flex-1 text-foreground/90",
+							children: item.label
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-[11px] text-muted-foreground/40 font-mono",
+							children: "⏎ Go"
+						})
+					]
+				}, idx);
+			}), filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "py-12 text-center text-[14px] text-muted-foreground/60 font-display",
+				children: [
+					"No results found for \"",
+					query,
+					"\""
+				]
+			})]
+		})]
+	});
+}
+function NotificationPanel({ onClose }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex flex-col",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "flex items-center justify-between px-3 py-2 border-b border-border/40",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "font-display text-[13px] font-semibold text-foreground",
+				children: "Workspace notifications"
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				onClick: onClose,
+				className: "rounded p-0.5 text-muted-foreground/60 hover:bg-[var(--inset)] hover:text-foreground",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n$7, { size: 13 })
+			})]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "p-0.5 space-y-0.5 max-h-[260px] overflow-y-auto",
+			children: [
+				{
+					title: "Credit balance notice",
+					body: "Your balance is below 1,500 credits. Top up to ensure continuous API key delivery.",
+					date: "Today"
+				},
+				{
+					title: "Silk Mulberry v1.5 live",
+					body: "Expressive Indian voices have been updated with 20% lower latency.",
+					date: "Yesterday"
+				},
+				{
+					title: "Workspace update",
+					body: "Acme Studio workspace invite accepted by Shred.",
+					date: "3d ago"
+				}
+			].map((n, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "p-2.5 hover:bg-[var(--inset)] rounded-md transition-colors duration-75",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-baseline justify-between gap-4",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "font-display text-[12.5px] font-semibold text-foreground",
+						children: n.title
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "text-[10px] text-muted-foreground/50 shrink-0",
+						children: n.date
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-0.5 text-[11.5px] text-muted-foreground leading-normal",
+					children: n.body
+				})]
+			}, idx))
+		})]
+	});
+}
+//#endregion
+export { AppShell as component };

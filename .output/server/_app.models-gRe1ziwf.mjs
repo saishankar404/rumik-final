@@ -1,0 +1,313 @@
+import { a as __toESM } from "./_runtime.mjs";
+import { n as require_jsx_runtime } from "./_libs/react+tanstack__react-query.mjs";
+import { n as PageHeader, o as Waveform, r as Section } from "./_ssr/primitives-MhefxCVw.mjs";
+import { H as require_react, d as n, u as n$1 } from "./_libs/phosphor-icons__react+react.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/_app.models-gRe1ziwf.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_jsx_runtime = require_jsx_runtime();
+var MODELS_DATA = [
+	{
+		id: "silk-spider-1",
+		name: "Silk Spider 1 (Beta)",
+		latency: "120ms",
+		ratePer1k: .35,
+		speedScore: 98,
+		qualityScore: 60,
+		sampleText: "System initialized. GPS signal acquired successfully.",
+		colorClass: "bg-teal-500",
+		recommendation: "Sub-second speech loops & real-time bots",
+		tier: "Cheapest",
+		qualityText: "Clear / Direct"
+	},
+	{
+		id: "silk-mulberry-1.5",
+		name: "Silk Mulberry 1.5",
+		latency: "280ms",
+		ratePer1k: .5,
+		speedScore: 70,
+		qualityScore: 95,
+		sampleText: "Good morning. Setting your focus mode for the next forty minutes.",
+		colorClass: "bg-blue-500",
+		recommendation: "Studio narration, audiobooks, & podcasts",
+		tier: "Best Value",
+		qualityText: "Ultra-Expressive"
+	},
+	{
+		id: "silk-muga-1",
+		name: "Silk Muga 1",
+		latency: "180ms",
+		ratePer1k: .99,
+		speedScore: 90,
+		qualityScore: 75,
+		sampleText: "Welcome back! Your dashboard has three new alert logs.",
+		colorClass: "bg-[var(--success)]",
+		recommendation: "General interactive IVR & assistants",
+		tier: "Standard",
+		qualityText: "Conversational"
+	},
+	{
+		id: "openai-tts",
+		name: "OpenAI TTS",
+		latency: "240ms",
+		ratePer1k: 2.5,
+		speedScore: 82,
+		qualityScore: 88,
+		sampleText: "This is an external API baseline sample.",
+		isExternal: true,
+		colorClass: "bg-orange-400",
+		recommendation: "Multi-language translations & fallback",
+		tier: "High-Cost",
+		qualityText: "Neutral / Balanced"
+	},
+	{
+		id: "elevenlabs-v3",
+		name: "ElevenLabs v3",
+		latency: "350ms",
+		ratePer1k: 10,
+		speedScore: 60,
+		qualityScore: 92,
+		sampleText: "This is an external API baseline sample.",
+		isExternal: true,
+		colorClass: "bg-red-400",
+		recommendation: "Custom voice clones & video dubbing",
+		tier: "Premium Cost",
+		qualityText: "High-Fidelity"
+	}
+];
+function Models() {
+	const [chars, setChars] = (0, import_react.useState)(25e4);
+	const [playingId, setPlayingId] = (0, import_react.useState)(null);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageHeader, {
+			eyebrow: "Library",
+			title: "Models",
+			subtitle: "Compare efficiency, tradeoffs, and costs visually."
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Section, {
+			className: "!pt-2",
+			title: "Cost comparison",
+			hint: "Drag to compare monthly cost based on volume.",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-8",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "space-y-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center justify-between",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-[13px] text-muted-foreground",
+							children: "Monthly volume"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "font-display text-[14px] font-semibold text-foreground tabular-nums",
+							children: [
+								chars.toLocaleString(),
+								" ",
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-[12px] font-normal text-muted-foreground",
+									children: "chars"
+								})
+							]
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "relative py-2 group",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "h-[3px] w-full rounded-full bg-border/70 relative",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "absolute inset-y-0 left-0 bg-foreground rounded-full",
+									style: { width: `${chars / 2e6 * 100}%` }
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "range",
+									min: 5e4,
+									max: 2e6,
+									step: 5e4,
+									value: chars,
+									onChange: (e) => setChars(parseInt(e.target.value)),
+									className: "absolute -top-3 left-0 h-10 w-full cursor-pointer opacity-0"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "absolute top-1/2 -translate-y-1/2 h-[12px] w-[12px] rounded-full bg-background border-2 border-foreground shadow-[0_1px_3px_rgba(0,0,0,0.15)]",
+									style: { left: `calc(${chars / 2e6 * 100}% - 6px)` }
+								})
+							]
+						})
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "flex items-end gap-3.5 justify-center pt-8 pb-3 border-b border-border/40 h-[280px] group/chart",
+					children: MODELS_DATA.map((m) => {
+						const totalCost = chars / 1e3 * m.ratePer1k;
+						const heightPct = Math.max(12, totalCost / (2e6 / 1e3 * 10) * 210);
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex flex-col items-center gap-2.5 flex-1 max-w-[124px] group/bar transition-all duration-200 group-hover/chart:opacity-40 hover:!opacity-100 hover:scale-[1.03] relative cursor-pointer",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "absolute bottom-[calc(100%+30px)] left-1/2 -translate-x-1/2 z-20 w-36 scale-95 opacity-0 pointer-events-none rounded-lg border border-border bg-background p-2.5 shadow-lg group-hover/bar:scale-100 group-hover/bar:opacity-100 transition-all duration-150",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "font-semibold text-foreground text-[11.5px] truncate",
+											children: m.name
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "mt-1 flex items-center justify-between text-[11px] text-muted-foreground",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Latency:" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-foreground font-medium",
+												children: m.latency
+											})]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center justify-between text-[11px] text-muted-foreground",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Rate / 1k:" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												className: "text-foreground font-medium",
+												children: ["₹", m.ratePer1k.toFixed(2)]
+											})]
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+									className: "font-display text-[12.5px] font-semibold text-foreground tabular-nums transition-transform duration-100 group-hover/bar:-translate-y-0.5",
+									children: ["₹", Math.round(totalCost).toLocaleString()]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: `w-full rounded-t-[3px] transition-all duration-150 group-hover/bar:brightness-95 ${m.colorClass}`,
+									style: { height: `${heightPct}px` }
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-[11.5px] text-muted-foreground font-medium text-center truncate w-full mt-1",
+									children: m.name.replace(" (Beta)", "")
+								})
+							]
+						}, m.id);
+					})
+				})]
+			})
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Section, {
+			title: "Tradeoff matrix",
+			hint: "Steerability, performance metrics, and cost tiers compared.",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "-mx-3 pt-1",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "grid grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-6 px-3 pb-3 eyebrow-label border-b border-border/30",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Model profile" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Latency (Speed)" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Cost rate" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-right",
+							children: "Price tier"
+						})
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "divide-y divide-border/20",
+					children: MODELS_DATA.map((m) => {
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "grid grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-6 items-center px-3 py-4 hover:bg-[var(--inset)]/30 transition-all duration-150 rounded-md group/row",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "space-y-0.5 min-w-0",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-[14px] font-semibold text-foreground truncate block",
+										children: m.name
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-[11.5px] text-muted-foreground/60 block",
+										children: m.isExternal ? "External API integration" : "Rumik native model"
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex items-center gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "rounded bg-[var(--inset)] px-2.5 py-1 font-mono text-[12px] text-foreground font-semibold tabular-nums",
+										children: m.latency
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-[12px] text-muted-foreground font-medium",
+										children: m.speedScore >= 90 ? "Sub-second" : m.speedScore >= 75 ? "Snappy" : "Buffered"
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "text-[12.5px] font-mono text-foreground tabular-nums",
+									children: [
+										"₹",
+										m.ratePer1k.toFixed(2),
+										" ",
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[11.5px] font-sans text-muted-foreground font-normal",
+											children: "/ 1K chars"
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "text-right",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: `inline-block rounded px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${m.ratePer1k <= .35 ? "bg-teal-500/10 text-teal-600" : m.ratePer1k <= .99 ? "bg-[color-mix(in_oklab,var(--success)_10%,transparent)] text-[var(--success)]" : m.ratePer1k <= 2.5 ? "bg-orange-500/10 text-orange-600" : "bg-red-500/10 text-red-600"}`,
+										children: m.tier
+									})
+								})
+							]
+						}, m.id);
+					})
+				})]
+			})
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Section, {
+			title: "Audio preview",
+			hint: "Listen to voice samples.",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "-mx-3",
+				children: MODELS_DATA.filter((m) => !m.isExternal).map((m) => {
+					const isPlaying = playingId === m.id;
+					return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center gap-6 rounded-md px-3 py-3.5 row-hover",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								onClick: () => setPlayingId(isPlaying ? null : m.id),
+								className: "grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-100 hover:scale-105 active:scale-95",
+								children: isPlaying ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n, {
+									size: 10,
+									weight: "fill",
+									className: "text-background"
+								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(n$1, {
+									size: 10,
+									weight: "fill",
+									className: "text-background translate-x-px"
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "min-w-0 flex-1 leading-tight",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "font-display text-[13.5px] font-semibold text-foreground",
+									children: m.name
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+									className: "mt-0.5 text-[12.5px] text-muted-foreground truncate italic",
+									children: [
+										"\"",
+										m.sampleText,
+										"\""
+									]
+								})]
+							}),
+							isPlaying && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-[140px] animate-fade-in shrink-0",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Waveform, {
+									bars: 24,
+									playing: isPlaying
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "text-right shrink-0",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "font-display text-[13px] font-semibold text-foreground",
+									children: ["₹", m.ratePer1k.toFixed(2)]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "text-[11px] text-muted-foreground",
+									children: "per 1k chars"
+								})]
+							})
+						]
+					}, m.id);
+				})
+			})
+		})
+	] });
+}
+//#endregion
+export { Models as component };
