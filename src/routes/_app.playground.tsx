@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -169,6 +169,63 @@ const TEMP_HINT = (v: number) => {
   return "Experimental";
 };
 
+/* ─── Command Bar: intent parser + mock data ─── */
+
+type CmdAction =
+  | "logs:summary"
+  | "usage:summary"
+  | "keys:rotate"
+  | "billing:balance"
+  | "models:list"
+  | "help";
+
+function parseIntent(prompt: string): CmdAction {
+  const p = prompt.toLowerCase();
+  if (/log|error|recent/.test(p)) return "logs:summary";
+  if (/usage|burn|request|stat/.test(p)) return "usage:summary";
+  if (/rotate|regenerate|new key/.test(p)) return "keys:rotate";
+  if (/credit|balance/.test(p)) return "billing:balance";
+  if (/model|compare|which/.test(p)) return "models:list";
+  return "help";
+}
+
+const CMD_LOGS = [
+  {
+    ago: "3m ago",
+    model: "silk muga 1",
+    status: 200,
+    text: "Good morning! Setting focus mode for next hour.",
+    credits: 0.12,
+  },
+  {
+    ago: "14m ago",
+    model: "silk mulberry 1.5",
+    status: 500,
+    text: "Introduced by the Acme group. A live sample readout.",
+    credits: 0.28,
+  },
+  {
+    ago: "1h ago",
+    model: "silk muga 1",
+    status: 200,
+    text: "Testing custom emotion tag insertion here.",
+    credits: 0.12,
+  },
+];
+
+const CMD_USAGE = {
+  requests: 152,
+  successRate: "97.4%",
+  credits: 33,
+  chars: 21896,
+};
+
+const CMD_BILLING = {
+  balance: "1,024",
+  burned: "185",
+  requests: "849",
+};
+
 /* ─── Main ─── */
 
 function Playground() {
@@ -193,6 +250,17 @@ function Playground() {
   const [tab, setTab] = useState<"settings" | "experiments">("settings");
   const [flashedTag, setFlashedTag] = useState<string | null>(null);
   const nextId = useRef(SEED_EXPERIMENTS.length + 1);
+
+  /* ── Command bar state ── */
+  const [cmdPrompt, setCmdPrompt] = useState("");
+  const [cmdResult, setCmdResult] = useState<{
+    action: CmdAction;
+    content: React.ReactNode;
+  } | null>(null);
+  const [cmdThinking, setCmdThinking] = useState(false);
+  const cmdHistory = useRef<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const cmdInputRef = useRef<HTMLInputElement>(null);
 
   const activeModel = MODELS.find((m) => m.id === modelId)!;
   const isEmpty = text.trim() === "";
@@ -277,6 +345,262 @@ function Playground() {
       }, 600);
     }, latency);
   }, [text, activeModel, tone, temp, isEmpty, isGenerating]);
+
+  /* ── Command bar: result renderer ── */
+  const renderResult = useCallback((action: CmdAction): React.ReactNode => {
+    const fullPageLink = (to: string, label: string) => (
+      <Link
+        to={to}
+        className="inline-flex items-center gap-1 text-[12.5px] text-muted-foreground hover:text-foreground transition-colors mt-3"
+      >
+        {label}
+      </Link>
+    );
+
+    switch (action) {
+      case "logs:summary":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Recent logs
+            </p>
+            <div className="space-y-2">
+              {CMD_LOGS.map((log, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-lg border border-border/40 px-3 py-2"
+                >
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium tabular-nums ${
+                      log.status === 200
+                        ? "bg-[var(--success)]/10 text-[var(--success)]"
+                        : "bg-red-500/10 text-red-500"
+                    }`}
+                  >
+                    {log.status}
+                  </span>
+                  <span className="text-[12.5px] text-muted-foreground/60 tabular-nums shrink-0">
+                    {log.ago}
+                  </span>
+                  <span className="text-[13px] text-foreground/80 truncate flex-1">
+                    {log.text}
+                  </span>
+                  <span className="text-[12px] text-muted-foreground/50 tabular-nums shrink-0">
+                    {log.credits} cr
+                  </span>
+                </div>
+              ))}
+            </div>
+            {fullPageLink("/logs", "Go to full page →")}
+          </div>
+        );
+
+      case "usage:summary":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Usage summary — last 7 days
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Requests
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_USAGE.requests}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Success rate
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_USAGE.successRate}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Credits used
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_USAGE.credits}
+                </p>
+              </div>
+            </div>
+            {fullPageLink("/usage", "Go to full page →")}
+          </div>
+        );
+
+      case "keys:rotate":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Key rotated
+            </p>
+            <div className="flex items-center gap-3 rounded-lg border border-border/40 bg-[var(--inset)]/30 px-3 py-2.5">
+              <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-[var(--success)]/10 text-[var(--success)]">
+                <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+              </span>
+              <div className="flex-1">
+                <p className="text-[12.5px] text-muted-foreground/60">
+                  New key prefix
+                </p>
+                <p className="font-mono text-[14px] text-foreground mt-0.5">
+                  rumik_live_••••a7f3
+                </p>
+              </div>
+            </div>
+            <p className="text-[12px] text-muted-foreground/50 mt-2">
+              The old key has been revoked. Update your integrations with the
+              new key.
+            </p>
+            {fullPageLink("/api-keys", "Go to full page →")}
+          </div>
+        );
+
+      case "billing:balance":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Billing overview
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Credits remaining
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_BILLING.balance}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Burned this month
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_BILLING.burned}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border/40 px-3 py-2.5">
+                <p className="text-[11.5px] text-muted-foreground/50">
+                  Total requests
+                </p>
+                <p className="font-display text-[18px] tabular-nums text-foreground mt-0.5">
+                  {CMD_BILLING.requests}
+                </p>
+              </div>
+            </div>
+            {fullPageLink("/billing", "Go to full page →")}
+          </div>
+        );
+
+      case "models:list":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Available models
+            </p>
+            <div className="space-y-2">
+              {MODELS.map((m) => (
+                <div
+                  key={m.id}
+                  className="rounded-lg border border-border/40 px-3 py-2.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13.5px] font-medium text-foreground">
+                      {m.label}
+                    </span>
+                    <span className="text-[12px] text-muted-foreground/60">
+                      {m.sublabel}
+                    </span>
+                  </div>
+                  <p className="text-[12.5px] text-muted-foreground/60 mt-1">
+                    {m.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {fullPageLink("/models", "Go to full page →")}
+          </div>
+        );
+
+      case "help":
+        return (
+          <div>
+            <p className="text-[13px] font-medium text-foreground mb-3">
+              Available commands
+            </p>
+            <div className="space-y-1.5">
+              {[
+                { cmd: "show me recent logs", desc: "View recent API logs" },
+                { cmd: "what's my usage?", desc: "Usage summary & KPIs" },
+                { cmd: "rotate my key", desc: "Regenerate API key" },
+                { cmd: "what's my balance?", desc: "Billing & credits" },
+                { cmd: "list models", desc: "Compare available models" },
+              ].map((item) => (
+                <div
+                  key={item.cmd}
+                  className="flex items-center gap-3 rounded-lg px-3 py-1.5 hover:bg-[var(--inset)]/30 transition-colors"
+                >
+                  <span className="font-mono text-[12.5px] text-foreground/80">
+                    {">"}
+                  </span>
+                  <span className="text-[13px] text-foreground">
+                    {item.cmd}
+                  </span>
+                  <span className="text-[12px] text-muted-foreground/50 ml-auto">
+                    {item.desc}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {fullPageLink("/docs", "Go to docs →")}
+          </div>
+        );
+    }
+  }, []);
+
+  /* ── Command bar: run + keyboard ── */
+  const runCommand = useCallback(() => {
+    const prompt = cmdPrompt.trim();
+    if (!prompt) return;
+    const action = parseIntent(prompt);
+    cmdHistory.current.unshift(prompt);
+    setHistoryIndex(-1);
+    setCmdThinking(true);
+    setCmdResult(null);
+    setTimeout(() => {
+      setCmdThinking(false);
+      setCmdResult({ action, content: renderResult(action) });
+    }, 800);
+  }, [cmdPrompt, renderResult]);
+
+  const handleCmdKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runCommand();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const next = Math.min(historyIndex + 1, cmdHistory.current.length - 1);
+        if (next >= 0) {
+          setHistoryIndex(next);
+          setCmdPrompt(cmdHistory.current[next]);
+        }
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = historyIndex - 1;
+        if (next < 0) {
+          setHistoryIndex(-1);
+          setCmdPrompt("");
+        } else {
+          setHistoryIndex(next);
+          setCmdPrompt(cmdHistory.current[next]);
+        }
+      }
+    },
+    [historyIndex, runCommand],
+  );
 
   return (
     <div className="flex flex-col md:flex-row h-full min-h-0">
@@ -491,6 +815,67 @@ function Playground() {
                           );
                         })}
                       </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* ── Agentic command bar ── */}
+              <div className="mx-10 mb-6">
+                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-[var(--inset)]/30 px-4 py-3">
+                  <span className="font-mono text-[14px] text-muted-foreground/40 select-none">
+                    {">"}
+                  </span>
+                  <input
+                    ref={cmdInputRef}
+                    value={cmdPrompt}
+                    onChange={(e) => setCmdPrompt(e.target.value)}
+                    onKeyDown={handleCmdKeyDown}
+                    placeholder="Ask anything… e.g. 'show me recent error logs'"
+                    aria-label="Agent command input"
+                    className="flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/30"
+                  />
+                  <button
+                    onClick={runCommand}
+                    disabled={!cmdPrompt.trim()}
+                    className="rounded-md bg-foreground px-3 py-1.5 text-[12.5px] font-medium text-background transition-transform active:scale-[0.96] disabled:opacity-35 disabled:cursor-not-allowed"
+                  >
+                    Run
+                  </button>
+                </div>
+
+                {/* Thinking indicator */}
+                {cmdThinking && (
+                  <div className="mt-3 flex items-center gap-2 text-[13px] text-muted-foreground">
+                    <span className="flex gap-1">
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                        style={{ animationDelay: "0ms" }}
+                      />
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                        style={{ animationDelay: "150ms" }}
+                      />
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                        style={{ animationDelay: "300ms" }}
+                      />
+                    </span>
+                    Thinking…
+                  </div>
+                )}
+
+                {/* Result panel */}
+                <AnimatePresence>
+                  {cmdResult && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                      transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+                      className="mt-3 rounded-xl border border-border/60 bg-background p-4"
+                    >
+                      {cmdResult.content}
                     </motion.div>
                   )}
                 </AnimatePresence>
