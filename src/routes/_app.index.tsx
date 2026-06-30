@@ -474,13 +474,17 @@ function Overview() {
                             <span className="font-mono text-[11px] font-medium text-foreground/80">
                               {a.model}
                             </span>{" "}
-                            · {a.ago} · via {a.source}
+                            · <span className="hidden sm:inline">{a.ago}</span>{" "}
+                            ·{" "}
+                            <span className="hidden sm:inline">
+                              via {a.source}
+                            </span>
                           </div>
                         </div>
-                        <span className="font-display text-[12.5px] tabular-nums text-muted-foreground shrink-0">
+                        <span className="hidden sm:inline font-display text-[12.5px] tabular-nums text-muted-foreground shrink-0">
                           {a.ms} ms
                         </span>
-                        <span className="font-display text-[12.5px] tabular-nums text-muted-foreground shrink-0">
+                        <span className="hidden sm:inline font-display text-[12.5px] tabular-nums text-muted-foreground shrink-0">
                           {a.cost > 0 ? `${a.cost.toFixed(2)} cr` : "—"}
                         </span>
                         <div className="justify-self-end shrink-0">

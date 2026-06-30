@@ -210,7 +210,16 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
           open ? "translate-x-0" : "-translate-x-full"
         } md:sticky md:top-0 md:z-auto md:w-[244px] md:translate-x-0 md:transition-none`}
       >
-        <div ref={wsRef} className="relative px-3 pt-3">
+        {/* Mobile close button — positioned above workspace selector */}
+        <button
+          onClick={onClose}
+          aria-label="Close sidebar"
+          className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--sidebar-accent)] hover:text-foreground transition-colors active:scale-[0.96] md:hidden"
+        >
+          <X size={16} />
+        </button>
+
+        <div ref={wsRef} className="relative px-3 pt-3 pr-11 md:pr-3">
           <button
             onClick={() => setWsOpen((v) => !v)}
             aria-haspopup="menu"
@@ -333,15 +342,6 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
             Pro
           </span>
         </div>
-
-        {/* Mobile close button */}
-        <button
-          onClick={onClose}
-          aria-label="Close sidebar"
-          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--sidebar-accent)] hover:text-foreground transition-colors active:scale-[0.96] md:hidden"
-        >
-          <X size={16} />
-        </button>
       </aside>
     </>
   );
@@ -436,7 +436,7 @@ function Topbar({
         <MagnifyingGlass size={16} />
       </button>
 
-      <div className="ml-auto flex items-center gap-1.5 md:ml-0">
+      <div className="flex items-center gap-1.5 md:ml-auto">
         {/* Local notifications popover container */}
         <div ref={bellRef} className="relative">
           <button
@@ -461,8 +461,8 @@ function Topbar({
           )}
         </div>
 
-        <div className="mx-2 h-5 w-px bg-border" />
-        <div className="flex items-center gap-2 rounded-md bg-[var(--inset)] px-2.5 py-1 select-none pointer-events-none">
+        <div className="mx-2 hidden h-5 w-px bg-border sm:block" />
+        <div className="hidden items-center gap-2 rounded-md bg-[var(--inset)] px-2.5 py-1 select-none pointer-events-none sm:flex">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
           <span className="font-display text-[12px] font-medium tabular-nums">
             1,024

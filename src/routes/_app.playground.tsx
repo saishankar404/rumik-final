@@ -607,7 +607,7 @@ function Playground() {
       {/* ── Left: Editor ── */}
       <div className="flex flex-1 flex-col min-w-0 overflow-y-auto">
         {/* Header — title + mode toggle */}
-        <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 pt-8 pb-0">
+        <div className="flex flex-col gap-3 px-4 sm:px-6 md:px-10 pt-8 pb-0 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-[17px] font-semibold text-foreground tracking-[-0.015em]">
               {mode === "tts" ? "Text to speech" : "Speech to text"}
@@ -630,7 +630,7 @@ function Playground() {
                     ? "Switch to text to speech"
                     : "Switch to speech to text"
                 }
-                className={`relative rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-150 ${
+                className={`relative rounded-md px-2 sm:px-3 py-1.5 text-[11px] sm:text-[12.5px] font-medium transition-colors duration-150 ${
                   mode === m
                     ? "text-background"
                     : "text-muted-foreground hover:text-foreground"
@@ -664,13 +664,13 @@ function Playground() {
               {/* Editor card — no border glow on focus */}
               <div className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
                 {/* Textarea */}
-                <div className="px-5 pt-5">
+                <div className="px-3 sm:px-5 pt-4 sm:pt-5">
                   <textarea
                     ref={taRef}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     spellCheck={false}
-                    rows={16}
+                    rows={10}
                     aria-label="Text to synthesize"
                     placeholder="Start typing here or paste any text you want to turn into speech…"
                     className="w-full resize-none bg-transparent text-[15.5px] leading-[1.75] tracking-[-0.005em] text-foreground outline-none placeholder:text-muted-foreground/30"
@@ -678,13 +678,13 @@ function Playground() {
                 </div>
 
                 {/* Editor footer — tools + credits + char count + Generate */}
-                <div className="flex items-center gap-2 border-t border-border/40 px-4 py-2.5">
+                <div className="flex flex-wrap items-center gap-2 border-t border-border/40 px-3 sm:px-4 py-2.5">
                   <button
                     aria-label="Enhance text"
                     className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
                   >
                     <MagicWand className="h-3.5 w-3.5" />
-                    Enhance
+                    <span className="hidden sm:inline">Enhance</span>
                   </button>
                   <button
                     onClick={() => setText("")}
@@ -692,17 +692,17 @@ function Playground() {
                     className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
                   >
                     <ArrowCounterClockwise className="h-3.5 w-3.5" />
-                    Clear
+                    <span className="hidden sm:inline">Clear</span>
                   </button>
 
-                  <div className="ml-auto flex items-center gap-3">
-                    <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
+                  <div className="ml-auto flex items-center gap-2 sm:gap-3">
+                    <span className="hidden sm:inline font-display text-[12px] tabular-nums text-muted-foreground/50">
                       <span className="text-muted-foreground/80 font-medium">
                         {CREDITS_REMAINING.toLocaleString()}
                       </span>
                       {" credits remaining"}
                     </span>
-                    <span className="h-3 w-px bg-border/60" />
+                    <span className="hidden sm:block h-3 w-px bg-border/60" />
                     <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
                       <span
                         className={
@@ -1009,7 +1009,7 @@ function Playground() {
       </div>
 
       {/* ── Right: Settings panel ── */}
-      <aside className="w-full md:w-[300px] lg:w-[280px] shrink-0 border-l border-border/50 flex flex-col overflow-hidden">
+      <aside className="w-full md:w-[300px] lg:w-[280px] shrink-0 border-t md:border-t-0 md:border-l border-border/50 flex flex-col overflow-hidden">
         {/* Tab bar */}
         <div
           role="tablist"

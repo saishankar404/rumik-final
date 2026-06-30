@@ -233,8 +233,8 @@ function Models() {
           </div>
         ) : (
           <div className="-mx-3 pt-1" aria-label="Model tradeoff comparison">
-            {/* Header Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-6 px-3 pb-3 eyebrow-label border-b border-border/30">
+            {/* Header Row — desktop only */}
+            <div className="hidden lg:grid grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-6 px-3 pb-3 eyebrow-label border-b border-border/30">
               <span>Model profile</span>
               <span>Latency (Speed)</span>
               <span>Cost rate</span>
@@ -247,7 +247,7 @@ function Models() {
                 return (
                   <div
                     key={m.id}
-                    className="grid grid-cols-1 lg:grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-6 items-center px-3 py-4 hover:bg-[var(--inset)]/30 transition-all duration-150 rounded-md group/row"
+                    className="grid grid-cols-1 lg:grid-cols-[1.5fr_1.2fr_1fr_0.8fr] gap-3 lg:gap-6 items-center px-3 py-4 hover:bg-[var(--inset)]/30 transition-all duration-150 rounded-md group/row"
                   >
                     {/* Model & Source */}
                     <div className="space-y-0.5 min-w-0">
@@ -263,6 +263,9 @@ function Models() {
 
                     {/* Latency (Speed) badge */}
                     <div className="flex items-center gap-3">
+                      <span className="lg:hidden text-[11px] text-muted-foreground/50 font-medium uppercase tracking-tight">
+                        Speed
+                      </span>
                       <span className="rounded bg-[var(--inset)] px-2.5 py-1 font-mono text-[12px] text-foreground font-semibold tabular-nums">
                         {m.latency}
                       </span>
@@ -276,15 +279,21 @@ function Models() {
                     </div>
 
                     {/* Cost rate column */}
-                    <div className="text-[12.5px] font-mono text-foreground tabular-nums">
-                      ₹{m.ratePer1k.toFixed(2)}{" "}
+                    <div className="flex items-center gap-2 text-[12.5px] font-mono text-foreground tabular-nums">
+                      <span className="lg:hidden text-[11px] text-muted-foreground/50 font-medium uppercase tracking-tight font-sans">
+                        Cost
+                      </span>
+                      ₹{m.ratePer1k.toFixed(2)}
                       <span className="text-[11.5px] font-sans text-muted-foreground font-normal">
                         / 1K chars
                       </span>
                     </div>
 
                     {/* Price Tier Pill */}
-                    <div className="text-right">
+                    <div className="text-left lg:text-right">
+                      <span className="lg:hidden mr-2 text-[11px] text-muted-foreground/50 font-medium uppercase tracking-tight font-sans">
+                        Tier
+                      </span>
                       <span
                         className={`inline-block rounded px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
                           m.ratePer1k <= 0.35

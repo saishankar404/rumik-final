@@ -591,9 +591,9 @@ function Logs() {
           role="dialog"
           aria-modal="true"
           aria-label="Log details"
-          className="fixed inset-y-0 right-0 z-30 flex w-[calc(100vw-1rem)] md:w-[440px] flex-col bg-background border-l border-border/80 shadow-[-12px_0_40px_-20px_rgba(0,0,0,0.18)] animate-slide-in-right"
+          className="fixed inset-y-0 right-0 z-30 flex w-full md:w-[440px] flex-col bg-background border-l border-border/80 shadow-[-12px_0_40px_-20px_rgba(0,0,0,0.18)] animate-slide-in-right"
         >
-          <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/40">
+          <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border/40">
             <div className="min-w-0">
               <div className="eyebrow-label">Request detail</div>
               <div className="mt-1 truncate font-mono text-[12px] text-muted-foreground">
@@ -611,7 +611,7 @@ function Logs() {
               <X size={15} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-6">
             <Block title="Request metadata">
               <Field k="Time" v={open.ago} />
               <Field k="Integration key" v={open.key} />

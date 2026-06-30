@@ -153,6 +153,8 @@
     font-feature-settings: "ss01", "ss02";
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.005em;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 
   html {
@@ -175,14 +177,6 @@
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
-
-  :focus:not(:focus-visible) {
-    outline: none;
-  }
-
-  /* Mobile viewport height — handles iOS/Android browser chrome */
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
 
   /* Prevent double-tap zoom on interactive elements */
   button,
