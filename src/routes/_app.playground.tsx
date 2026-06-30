@@ -983,7 +983,7 @@ function ExperimentsPanel({
   if (experiments.length === 0) {
     return (
       <EmptyState
-        icon={Waveform}
+        icon={MagicWand}
         title="No experiments yet"
         description="Synthesize something to save it here."
         className="py-20 px-8"

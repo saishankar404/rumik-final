@@ -274,7 +274,7 @@ export function EmptyState({
         <Icon
           className="mb-4 h-8 w-8 text-muted-foreground/30"
           weight="thin"
-          aria-hidden="true"
+          aria-hidden
         />
       )}
       <p className="text-[14px] font-medium text-foreground/80">{title}</p>
