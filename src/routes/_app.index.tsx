@@ -402,12 +402,12 @@ function Overview() {
               <div className="eyebrow-label flex items-center justify-between">
                 <span>Requests (24h)</span>
                 {hoveredReq !== null && (
-                  <span className="text-[12px] text-muted-foreground animate-fade-in normal-case font-medium">
+                  <span className="text-[12px] text-muted-foreground normal-case font-medium">
                     {hoveredReq} requests
                   </span>
                 )}
               </div>
-              <div className="mt-3 flex items-baseline gap-2.5">
+              <div className="mt-3 flex items-center gap-2.5">
                 <span className="font-display text-[36px] font-medium leading-none tracking-[-0.02em] tabular-nums">
                   {hoveredReq !== null ? hoveredReq : metrics.req24h}
                 </span>
@@ -422,6 +422,7 @@ function Overview() {
               >
                 <Sparkline
                   values={metrics.sparkValues}
+                  height={40}
                   onHover={(v) => setHoveredReq(v)}
                 />
               </div>
@@ -462,7 +463,7 @@ function Overview() {
                     return (
                       <div
                         key={i}
-                        className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 rounded-md px-3 py-3 row-hover stagger-item"
+                        className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 rounded-md px-3 py-3.5 -mx-3 row-hover stagger-item"
                         style={{ animationDelay: `${i * 30}ms` }}
                       >
                         <div className="min-w-0 leading-tight">
@@ -525,7 +526,7 @@ function Overview() {
                     return (
                       <div
                         key={m.name}
-                        className="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_auto] items-center gap-6 py-4.5 border-b border-border/30 last:border-b-0 stagger-item"
+                        className="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_auto_auto] items-center gap-6 py-4 px-3 -mx-3 rounded-md row-hover border-b border-border/30 last:border-b-0 stagger-item"
                         style={{ animationDelay: `${i * 30}ms` }}
                       >
                         <div className="min-w-0">
@@ -539,6 +540,7 @@ function Overview() {
                         <div className="shrink-0 hidden md:block">
                           <Sparkline
                             values={m.spark}
+                            height={32}
                             onHover={(v) => {
                               setHoveredModelIndex((prev) => ({
                                 ...prev,

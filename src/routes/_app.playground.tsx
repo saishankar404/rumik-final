@@ -605,403 +605,405 @@ function Playground() {
   return (
     <div className="flex flex-col md:flex-row h-full min-h-0">
       {/* ── Left: Editor ── */}
-      <div className="flex flex-1 flex-col min-w-0 overflow-y-auto">
-        {/* Header — title + mode toggle */}
-        <div className="flex flex-col gap-3 px-4 sm:px-6 md:px-10 pt-8 pb-0 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-[17px] font-semibold text-foreground tracking-[-0.015em]">
-              {mode === "tts" ? "Text to speech" : "Speech to text"}
-            </h1>
-            <p className="mt-0.5 text-[13.5px] text-muted-foreground">
-              {mode === "tts"
-                ? "Compose, tune, and iterate."
-                : "Transcribe audio or speak live."}
-            </p>
+      <div className="flex flex-1 flex-col min-w-0">
+        <div className="flex-1 overflow-y-auto">
+          {/* Header — title + mode toggle */}
+          <div className="flex flex-col gap-3 px-4 sm:px-6 md:px-10 pt-8 pb-0 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-[17px] font-semibold text-foreground tracking-[-0.015em]">
+                {mode === "tts" ? "Text to speech" : "Speech to text"}
+              </h1>
+              <p className="mt-0.5 text-[13.5px] text-muted-foreground">
+                {mode === "tts"
+                  ? "Compose, tune, and iterate."
+                  : "Transcribe audio or speak live."}
+              </p>
+            </div>
+
+            {/* Monochrome mode toggle */}
+            <div className="relative flex items-center rounded-lg bg-[var(--inset)] p-0.5">
+              {(["tts", "stt"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  aria-label={
+                    m === "tts"
+                      ? "Switch to text to speech"
+                      : "Switch to speech to text"
+                  }
+                  className={`relative rounded-md px-2 sm:px-3 py-1.5 text-[11px] sm:text-[12.5px] font-medium transition-colors duration-150 ${
+                    mode === m
+                      ? "text-background"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {mode === m && (
+                    <motion.div
+                      layoutId="mode-toggle-pill"
+                      className="absolute inset-0 rounded-md bg-foreground"
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">
+                    {m === "tts" ? "Text → Speech" : "Speech → Text"}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Monochrome mode toggle */}
-          <div className="relative flex items-center rounded-lg bg-[var(--inset)] p-0.5">
-            {(["tts", "stt"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                aria-label={
-                  m === "tts"
-                    ? "Switch to text to speech"
-                    : "Switch to speech to text"
-                }
-                className={`relative rounded-md px-2 sm:px-3 py-1.5 text-[11px] sm:text-[12.5px] font-medium transition-colors duration-150 ${
-                  mode === m
-                    ? "text-background"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+          {/* ── Editor area — TTS mode ── */}
+          <AnimatePresence mode="wait">
+            {mode === "tts" ? (
+              <motion.div
+                key="tts-editor"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
               >
-                {mode === m && (
-                  <motion.div
-                    layoutId="mode-toggle-pill"
-                    className="absolute inset-0 rounded-md bg-foreground"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">
-                  {m === "tts" ? "Text → Speech" : "Speech → Text"}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+                {/* Editor card — no border glow on focus */}
+                <div className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
+                  {/* Textarea */}
+                  <div className="px-3 sm:px-5 pt-4 sm:pt-5">
+                    <textarea
+                      ref={taRef}
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      spellCheck={false}
+                      rows={10}
+                      aria-label="Text to synthesize"
+                      placeholder="Start typing here or paste any text you want to turn into speech…"
+                      className="w-full resize-none bg-transparent text-[15.5px] leading-[1.75] tracking-[-0.005em] text-foreground outline-none placeholder:text-muted-foreground/30"
+                    />
+                  </div>
 
-        {/* ── Editor area — TTS mode ── */}
-        <AnimatePresence mode="wait">
-          {mode === "tts" ? (
-            <motion.div
-              key="tts-editor"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-            >
-              {/* Editor card — no border glow on focus */}
-              <div className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
-                {/* Textarea */}
-                <div className="px-3 sm:px-5 pt-4 sm:pt-5">
-                  <textarea
-                    ref={taRef}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    spellCheck={false}
-                    rows={10}
-                    aria-label="Text to synthesize"
-                    placeholder="Start typing here or paste any text you want to turn into speech…"
-                    className="w-full resize-none bg-transparent text-[15.5px] leading-[1.75] tracking-[-0.005em] text-foreground outline-none placeholder:text-muted-foreground/30"
-                  />
+                  {/* Editor footer — tools + credits + char count + Generate */}
+                  <div className="flex flex-wrap items-center gap-2 border-t border-border/40 px-3 sm:px-4 py-2.5">
+                    <button
+                      aria-label="Enhance text"
+                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
+                    >
+                      <MagicWand className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Enhance</span>
+                    </button>
+                    <button
+                      onClick={() => setText("")}
+                      aria-label="Clear text"
+                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
+                    >
+                      <ArrowCounterClockwise className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Clear</span>
+                    </button>
+
+                    <div className="ml-auto flex items-center gap-2 sm:gap-3">
+                      <span className="hidden sm:inline font-display text-[12px] tabular-nums text-muted-foreground/50">
+                        <span className="text-muted-foreground/80 font-medium">
+                          {CREDITS_REMAINING.toLocaleString()}
+                        </span>
+                        {" credits remaining"}
+                      </span>
+                      <span className="hidden sm:block h-3 w-px bg-border/60" />
+                      <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
+                        <span
+                          className={
+                            text.length > CHAR_LIMIT * 0.9
+                              ? "text-orange-500 font-medium"
+                              : ""
+                          }
+                        >
+                          {text.length}
+                        </span>
+                        {` / ${CHAR_LIMIT.toLocaleString()}`}
+                      </span>
+                      <button
+                        onClick={handleSynthesize}
+                        disabled={isEmpty || isGenerating}
+                        className={`relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 text-[13.5px] font-medium transition-all duration-150 active:scale-[0.96] disabled:cursor-not-allowed ${
+                          isDone
+                            ? "bg-[var(--success)] text-white disabled:opacity-100"
+                            : "bg-foreground text-background hover:bg-foreground/88 disabled:opacity-35"
+                        }`}
+                      >
+                        {isGenerating && (
+                          <span className="h-3.5 w-3.5 rounded-full border-2 border-background/30 border-t-background animate-spin" />
+                        )}
+                        {isDone ? (
+                          <>
+                            <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                            <span className="font-display tabular-nums">
+                              {lastLatencyMs}ms
+                            </span>
+                          </>
+                        ) : isGenerating ? (
+                          <span className="font-display text-background/70">
+                            Generating…
+                          </span>
+                        ) : (
+                          <>
+                            <Play className="h-3.5 w-3.5" fill="currentColor" />
+                            Generate speech
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Editor footer — tools + credits + char count + Generate */}
-                <div className="flex flex-wrap items-center gap-2 border-t border-border/40 px-3 sm:px-4 py-2.5">
-                  <button
-                    aria-label="Enhance text"
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
-                  >
-                    <MagicWand className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Enhance</span>
-                  </button>
-                  <button
-                    onClick={() => setText("")}
-                    aria-label="Clear text"
-                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
-                  >
-                    <ArrowCounterClockwise className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Clear</span>
-                  </button>
+                {/* ── Tags area — cross-fade between get-started and emotion tags ── */}
+                <div className="px-4 sm:px-6 md:px-10 pt-5 pb-4 min-h-[120px]">
+                  <AnimatePresence mode="wait">
+                    {isEmpty ? (
+                      <motion.div
+                        key="get-started"
+                        initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                        transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+                      >
+                        <p className="text-[13px] text-muted-foreground/50 mb-3">
+                          Get started with
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {STARTERS.map(({ Icon, label: sl, sample }) => (
+                            <button
+                              key={sl}
+                              onClick={() => loadStarter(sample)}
+                              className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3.5 py-1.5 text-[13.5px] text-foreground transition-all duration-150 hover:border-border hover:bg-[var(--inset)] active:scale-[0.96]"
+                            >
+                              <Icon
+                                className="h-4 w-4 text-muted-foreground shrink-0"
+                                strokeWidth={1.5}
+                              />
+                              {sl}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="emotion-tags"
+                        initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                        transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+                      >
+                        <p className="text-[13px] text-muted-foreground/50 mb-3">
+                          Emotion tags — click to insert at cursor
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {TAGS.map((t) => {
+                            const flashing = flashedTag === t.tag;
+                            return (
+                              <button
+                                key={t.tag}
+                                onClick={() => insertTag(t.tag)}
+                                title={t.hint}
+                                aria-label={t.hint}
+                                className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13.5px] transition-all duration-150 active:scale-[0.96] ${
+                                  flashing
+                                    ? "border-foreground/40 bg-foreground/[0.06] text-foreground scale-[0.96]"
+                                    : "border-border/70 bg-background text-foreground hover:border-border hover:bg-[var(--inset)]"
+                                }`}
+                              >
+                                <span className="font-mono text-muted-foreground">
+                                  &lt;{t.tag}&gt;
+                                </span>
+                                <span className="text-[12.5px] text-muted-foreground/60">
+                                  {t.hint}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
-                  <div className="ml-auto flex items-center gap-2 sm:gap-3">
-                    <span className="hidden sm:inline font-display text-[12px] tabular-nums text-muted-foreground/50">
+                {/* ── Agentic command bar ── */}
+                <div className="mx-4 sm:mx-6 md:mx-10 mb-6">
+                  <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-[var(--inset)]/30 px-4 py-3">
+                    <span className="font-mono text-[14px] text-muted-foreground/40 select-none">
+                      {">"}
+                    </span>
+                    <input
+                      ref={cmdInputRef}
+                      value={cmdPrompt}
+                      onChange={(e) => setCmdPrompt(e.target.value)}
+                      onKeyDown={handleCmdKeyDown}
+                      placeholder="Ask anything… e.g. 'show me recent error logs'"
+                      aria-label="Agent command input"
+                      className="flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/30"
+                    />
+                    <button
+                      onClick={runCommand}
+                      disabled={!cmdPrompt.trim()}
+                      className="rounded-md bg-foreground px-3 py-1.5 text-[12.5px] font-medium text-background transition-transform active:scale-[0.96] disabled:opacity-35 disabled:cursor-not-allowed"
+                    >
+                      Run
+                    </button>
+                  </div>
+
+                  {/* Thinking indicator */}
+                  {cmdThinking && (
+                    <div className="mt-3 flex items-center gap-2 text-[13px] text-muted-foreground">
+                      <span className="flex gap-1">
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                          style={{ animationDelay: "150ms" }}
+                        />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
+                          style={{ animationDelay: "300ms" }}
+                        />
+                      </span>
+                      Thinking…
+                    </div>
+                  )}
+
+                  {/* Result panel */}
+                  <AnimatePresence>
+                    {cmdResult && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                        transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+                        className="mt-3 rounded-xl border border-border/60 bg-background p-4"
+                      >
+                        {cmdResult.content}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            ) : (
+              /* ── STT mode — microphone + upload ── */
+              <motion.div
+                key="stt-editor"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
+                className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60"
+              >
+                <div className="flex flex-col items-center gap-8 px-5 py-10">
+                  {/* Microphone input */}
+                  <AIVoiceInput />
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-3 w-full max-w-md">
+                    <span className="h-px flex-1 bg-border/40" />
+                    <span className="text-[12px] text-muted-foreground/40 font-medium">
+                      or
+                    </span>
+                    <span className="h-px flex-1 bg-border/40" />
+                  </div>
+
+                  {/* Upload audio */}
+                  <AudioUploadCard />
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center gap-2 border-t border-border/40 px-4 py-2.5">
+                  <div className="ml-auto flex items-center gap-3">
+                    <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
                       <span className="text-muted-foreground/80 font-medium">
                         {CREDITS_REMAINING.toLocaleString()}
                       </span>
                       {" credits remaining"}
                     </span>
-                    <span className="hidden sm:block h-3 w-px bg-border/60" />
-                    <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
-                      <span
-                        className={
-                          text.length > CHAR_LIMIT * 0.9
-                            ? "text-orange-500 font-medium"
-                            : ""
-                        }
-                      >
-                        {text.length}
-                      </span>
-                      {` / ${CHAR_LIMIT.toLocaleString()}`}
-                    </span>
-                    <button
-                      onClick={handleSynthesize}
-                      disabled={isEmpty || isGenerating}
-                      className={`relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 text-[13.5px] font-medium transition-all duration-150 active:scale-[0.96] disabled:cursor-not-allowed ${
-                        isDone
-                          ? "bg-[var(--success)] text-white disabled:opacity-100"
-                          : "bg-foreground text-background hover:bg-foreground/88 disabled:opacity-35"
-                      }`}
-                    >
-                      {isGenerating && (
-                        <span className="h-3.5 w-3.5 rounded-full border-2 border-background/30 border-t-background animate-spin" />
-                      )}
-                      {isDone ? (
-                        <>
-                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                          <span className="font-display tabular-nums">
-                            {lastLatencyMs}ms
-                          </span>
-                        </>
-                      ) : isGenerating ? (
-                        <span className="font-display text-background/70">
-                          Generating…
-                        </span>
-                      ) : (
-                        <>
-                          <Play className="h-3.5 w-3.5" fill="currentColor" />
-                          Generate speech
-                        </>
-                      )}
+                    <button className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-[13.5px] font-medium text-background transition-all duration-150 hover:bg-foreground/88 active:scale-[0.96]">
+                      <Play className="h-3.5 w-3.5" fill="currentColor" />
+                      Transcribe
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-              {/* ── Tags area — cross-fade between get-started and emotion tags ── */}
-              <div className="px-4 sm:px-6 md:px-10 pt-5 pb-4 min-h-[120px]">
-                <AnimatePresence mode="wait">
-                  {isEmpty ? (
-                    <motion.div
-                      key="get-started"
-                      initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                      transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
-                    >
-                      <p className="text-[13px] text-muted-foreground/50 mb-3">
-                        Get started with
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {STARTERS.map(({ Icon, label: sl, sample }) => (
-                          <button
-                            key={sl}
-                            onClick={() => loadStarter(sample)}
-                            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3.5 py-1.5 text-[13.5px] text-foreground transition-all duration-150 hover:border-border hover:bg-[var(--inset)] active:scale-[0.96]"
-                          >
-                            <Icon
-                              className="h-4 w-4 text-muted-foreground shrink-0"
-                              strokeWidth={1.5}
-                            />
-                            {sl}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="emotion-tags"
-                      initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                      transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
-                    >
-                      <p className="text-[13px] text-muted-foreground/50 mb-3">
-                        Emotion tags — click to insert at cursor
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {TAGS.map((t) => {
-                          const flashing = flashedTag === t.tag;
-                          return (
-                            <button
-                              key={t.tag}
-                              onClick={() => insertTag(t.tag)}
-                              title={t.hint}
-                              aria-label={t.hint}
-                              className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13.5px] transition-all duration-150 active:scale-[0.96] ${
-                                flashing
-                                  ? "border-foreground/40 bg-foreground/[0.06] text-foreground scale-[0.96]"
-                                  : "border-border/70 bg-background text-foreground hover:border-border hover:bg-[var(--inset)]"
-                              }`}
-                            >
-                              <span className="font-mono text-muted-foreground">
-                                &lt;{t.tag}&gt;
-                              </span>
-                              <span className="text-[12.5px] text-muted-foreground/60">
-                                {t.hint}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* ── Agentic command bar ── */}
-              <div className="mx-4 sm:mx-6 md:mx-10 mb-6">
-                <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-[var(--inset)]/30 px-4 py-3">
-                  <span className="font-mono text-[14px] text-muted-foreground/40 select-none">
-                    {">"}
-                  </span>
-                  <input
-                    ref={cmdInputRef}
-                    value={cmdPrompt}
-                    onChange={(e) => setCmdPrompt(e.target.value)}
-                    onKeyDown={handleCmdKeyDown}
-                    placeholder="Ask anything… e.g. 'show me recent error logs'"
-                    aria-label="Agent command input"
-                    className="flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground/30"
-                  />
-                  <button
-                    onClick={runCommand}
-                    disabled={!cmdPrompt.trim()}
-                    className="rounded-md bg-foreground px-3 py-1.5 text-[12.5px] font-medium text-background transition-transform active:scale-[0.96] disabled:opacity-35 disabled:cursor-not-allowed"
-                  >
-                    Run
-                  </button>
-                </div>
-
-                {/* Thinking indicator */}
-                {cmdThinking && (
-                  <div className="mt-3 flex items-center gap-2 text-[13px] text-muted-foreground">
-                    <span className="flex gap-1">
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
-                        style={{ animationDelay: "0ms" }}
-                      />
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
-                        style={{ animationDelay: "150ms" }}
-                      />
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse"
-                        style={{ animationDelay: "300ms" }}
-                      />
-                    </span>
-                    Thinking…
-                  </div>
-                )}
-
-                {/* Result panel */}
-                <AnimatePresence>
-                  {cmdResult && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                      transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
-                      className="mt-3 rounded-xl border border-border/60 bg-background p-4"
-                    >
-                      {cmdResult.content}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* ── Waveform player — appears after generation ── */}
-              <AnimatePresence>
-                {isDone && (
-                  <motion.div
-                    key="waveform-player"
-                    initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-                    transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
-                    className="mx-4 sm:mx-6 md:mx-10 mb-10 rounded-xl border border-border/60 bg-[var(--inset)]/30"
-                    tabIndex={0}
-                    role="button"
-                    aria-label={isPlaying ? "Pause audio" : "Play audio"}
-                    onKeyDown={(e) => {
-                      if (e.key === " " || e.key === "Enter") {
-                        e.preventDefault();
-                        setIsPlaying((p) => !p);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-3 px-4 py-3.5">
-                      {/* Play / Pause button */}
-                      <button
-                        onClick={() => setIsPlaying((p) => !p)}
-                        aria-label={isPlaying ? "Pause audio" : "Play audio"}
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-150 active:scale-[0.96]"
-                      >
-                        {isPlaying ? (
-                          <Pause className="h-3.5 w-3.5" fill="currentColor" />
-                        ) : (
-                          <Play
-                            className="h-3.5 w-3.5 translate-x-px"
-                            fill="currentColor"
-                          />
-                        )}
-                      </button>
-
-                      {/* Timer */}
-                      <span className="font-mono text-[12px] tabular-nums text-muted-foreground w-[40px] shrink-0">
-                        {formatPlayTime(playTime)}
-                      </span>
-
-                      {/* Visualizer bars — full width edge-to-edge */}
-                      <div
-                        className="flex h-10 flex-1 items-center gap-[2px] min-w-0"
-                        role="img"
-                        aria-label="Audio waveform visualization"
-                      >
-                        {[...Array(64)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`flex-1 rounded-full transition-all duration-300 ${
-                              isPlaying
-                                ? "bg-foreground/40 animate-pulse"
-                                : "bg-muted-foreground/12"
-                            }`}
-                            style={
-                              isPlaying
-                                ? {
-                                    height: `${15 + Math.random() * 85}%`,
-                                    animationDelay: `${i * 0.04}s`,
-                                  }
-                                : { height: "15%" }
-                            }
-                          />
-                        ))}
-                      </div>
-
-                      {/* Download button */}
-                      <button
-                        aria-label="Download audio"
-                        className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
-                      >
-                        <Download className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            /* ── STT mode — microphone + upload ── */
+        {/* ── Waveform player — pinned to bottom of editor column ── */}
+        <AnimatePresence>
+          {isDone && mode === "tts" && (
             <motion.div
-              key="stt-editor"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60"
+              key="waveform-player"
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+              className="mx-4 sm:mx-6 md:mx-10 mb-6 shrink-0 rounded-xl border border-border/60 bg-[var(--inset)]/30"
+              tabIndex={0}
+              role="button"
+              aria-label={isPlaying ? "Pause audio" : "Play audio"}
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Enter") {
+                  e.preventDefault();
+                  setIsPlaying((p) => !p);
+                }
+              }}
             >
-              <div className="flex flex-col items-center gap-8 px-5 py-10">
-                {/* Microphone input */}
-                <AIVoiceInput />
+              <div className="flex items-center gap-3 px-4 py-3.5">
+                {/* Play / Pause button */}
+                <button
+                  onClick={() => setIsPlaying((p) => !p)}
+                  aria-label={isPlaying ? "Pause audio" : "Play audio"}
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-150 active:scale-[0.96]"
+                >
+                  {isPlaying ? (
+                    <Pause className="h-3.5 w-3.5" fill="currentColor" />
+                  ) : (
+                    <Play
+                      className="h-3.5 w-3.5 translate-x-px"
+                      fill="currentColor"
+                    />
+                  )}
+                </button>
 
-                {/* Divider */}
-                <div className="flex items-center gap-3 w-full max-w-md">
-                  <span className="h-px flex-1 bg-border/40" />
-                  <span className="text-[12px] text-muted-foreground/40 font-medium">
-                    or
-                  </span>
-                  <span className="h-px flex-1 bg-border/40" />
+                {/* Timer */}
+                <span className="font-mono text-[12px] tabular-nums text-muted-foreground w-[40px] shrink-0">
+                  {formatPlayTime(playTime)}
+                </span>
+
+                {/* Visualizer bars — full width edge-to-edge */}
+                <div className="flex h-10 flex-1 items-center gap-[2px] min-w-0">
+                  {[...Array(64)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`flex-1 rounded-full transition-all duration-300 ${
+                        isPlaying
+                          ? "bg-foreground/40 animate-pulse"
+                          : "bg-muted-foreground/12"
+                      }`}
+                      style={
+                        isPlaying
+                          ? {
+                              height: `${15 + Math.random() * 85}%`,
+                              animationDelay: `${i * 0.04}s`,
+                            }
+                          : { height: "15%" }
+                      }
+                    />
+                  ))}
                 </div>
 
-                {/* Upload audio */}
-                <AudioUploadCard />
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center gap-2 border-t border-border/40 px-4 py-2.5">
-                <div className="ml-auto flex items-center gap-3">
-                  <span className="font-display text-[12px] tabular-nums text-muted-foreground/50">
-                    <span className="text-muted-foreground/80 font-medium">
-                      {CREDITS_REMAINING.toLocaleString()}
-                    </span>
-                    {" credits remaining"}
-                  </span>
-                  <button className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-[13.5px] font-medium text-background transition-all duration-150 hover:bg-foreground/88 active:scale-[0.96]">
-                    <Play className="h-3.5 w-3.5" fill="currentColor" />
-                    Transcribe
-                  </button>
-                </div>
+                {/* Download button */}
+                <button
+                  aria-label="Download audio"
+                  className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
               </div>
             </motion.div>
           )}

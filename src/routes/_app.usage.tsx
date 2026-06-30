@@ -189,6 +189,201 @@ const WORKSPACE_DATA: Record<string, Record<string, RangeData>> = {
 
 const RANGES = ["24h", "7d", "30d"] as const;
 
+type SpendItem = {
+  label?: string;
+  name?: string;
+  family?: string;
+  credits: number;
+  requests: number;
+  pct: number;
+  color: string;
+  style: "filled" | "stroked";
+};
+
+const SPEND_DATA: Record<
+  (typeof RANGES)[number],
+  {
+    source: SpendItem[];
+    model: SpendItem[];
+    key: SpendItem[];
+  }
+> = {
+  "24h": {
+    source: [
+      {
+        label: "API Key",
+        credits: 42,
+        requests: 18,
+        pct: 56.0,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        label: "Playground",
+        credits: 33,
+        requests: 6,
+        pct: 44.0,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    model: [
+      {
+        name: "Silk Muga 1",
+        family: "muga",
+        credits: 51,
+        requests: 19,
+        pct: 68.0,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "Silk Mulberry 1.5",
+        family: "mulberry",
+        credits: 24,
+        requests: 5,
+        pct: 32.0,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    key: [
+      {
+        name: "prod-key-01",
+        credits: 31,
+        requests: 12,
+        pct: 41.3,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "dev-key-02",
+        credits: 11,
+        requests: 6,
+        pct: 14.7,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+  },
+  "7d": {
+    source: [
+      {
+        label: "API Key",
+        credits: 284,
+        requests: 96,
+        pct: 64.1,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        label: "Playground",
+        credits: 159,
+        requests: 22,
+        pct: 35.9,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    model: [
+      {
+        name: "Silk Muga 1",
+        family: "muga",
+        credits: 278,
+        requests: 89,
+        pct: 62.8,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "Silk Mulberry 1.5",
+        family: "mulberry",
+        credits: 165,
+        requests: 29,
+        pct: 37.2,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    key: [
+      {
+        name: "prod-key-01",
+        credits: 198,
+        requests: 64,
+        pct: 44.7,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "dev-key-02",
+        credits: 86,
+        requests: 32,
+        pct: 19.4,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+  },
+  "30d": {
+    source: [
+      {
+        label: "API Key",
+        credits: 847,
+        requests: 312,
+        pct: 68.2,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        label: "Playground",
+        credits: 395,
+        requests: 48,
+        pct: 31.8,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    model: [
+      {
+        name: "Silk Muga 1",
+        family: "muga",
+        credits: 772,
+        requests: 281,
+        pct: 62.1,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "Silk Mulberry 1.5",
+        family: "mulberry",
+        credits: 470,
+        requests: 79,
+        pct: 37.9,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+    key: [
+      {
+        name: "prod-key-01",
+        credits: 612,
+        requests: 198,
+        pct: 49.2,
+        color: "var(--foreground)",
+        style: "filled",
+      },
+      {
+        name: "dev-key-02",
+        credits: 235,
+        requests: 114,
+        pct: 18.9,
+        color: "var(--muted-foreground)",
+        style: "stroked",
+      },
+    ],
+  },
+};
+
 function Usage() {
   const ws = useWorkspace();
   const [range, setRange] = useState<"24h" | "7d" | "30d">("30d");
@@ -202,6 +397,27 @@ function Usage() {
     WORKSPACE_DATA[ws] || WORKSPACE_DATA["Personal workspace"];
   const { isLoading } = useMockResource(wsRangeData);
   const currentData = wsRangeData[range];
+  const currentSpend = SPEND_DATA[range];
+  const maxSourceCredits = Math.max(
+    ...currentSpend.source.map((s) => s.credits),
+    1,
+  );
+  const maxModelCredits = Math.max(
+    ...currentSpend.model.map((m) => m.credits),
+    1,
+  );
+  const maxKeyCredits = Math.max(...currentSpend.key.map((k) => k.credits), 1);
+
+  const [hoveredBar, setHoveredBar] = useState<{
+    section: string;
+    index: number;
+    x: number;
+    y: number;
+    label: string;
+    credits: number;
+    requests: number;
+    pct: number;
+  } | null>(null);
 
   const maxTotal = Math.max(...currentData.days.map((d) => d.ok + d.fail), 1);
   const isEmpty = currentData.days.length === 0 || currentData.total === 0;
@@ -358,7 +574,7 @@ function Usage() {
                     <div
                       key={d.d}
                       title={`${range === "24h" ? "Hour" : "Day"} ${d.d}: ${d.ok} ok${d.fail ? `, ${d.fail} failed` : ""}`}
-                      className="group relative flex-1 flex flex-col justify-end cursor-default"
+                      className="group relative flex-1 flex flex-col justify-end cursor-default rounded-sm transition-colors hover:bg-[var(--inset)]/40"
                       style={{ height: "100%" }}
                     >
                       <div
@@ -379,14 +595,6 @@ function Usage() {
                   );
                 })}
               </div>
-
-              {[25, 50, 75, 100].map((p) => (
-                <div
-                  key={p}
-                  className="absolute left-0 right-0 border-t border-border/30 pointer-events-none"
-                  style={{ bottom: `${p}%` }}
-                />
-              ))}
 
               <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-[10.5px] text-muted-foreground font-display">
                 {range === "24h" ? (
@@ -426,116 +634,571 @@ function Usage() {
             </div>
           </Section>
 
-          {/* Narrative Breakdown */}
+          {/* ── Credit spend breakdown — 3 columns with bar charts ── */}
+          <Section
+            title="Credit spend"
+            hint="Where your credits went, across sources, models, and keys."
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border/40 rounded-lg overflow-hidden">
+              {/* By source */}
+              <div className="bg-background p-6">
+                <div className="eyebrow-label mb-2">By source</div>
+                <p className="text-[12px] text-muted-foreground/60 mb-6 leading-relaxed">
+                  Credit spend split between API requests and playground
+                  generations.
+                </p>
+                {/* Bar chart */}
+                <div className="relative h-24 w-full mb-6">
+                  <div className="absolute inset-0 flex items-end gap-[3px]">
+                    {currentSpend.source.map((s, i) => {
+                      const hPct =
+                        s.credits === 0
+                          ? 3
+                          : Math.max(8, (s.credits / maxSourceCredits) * 100);
+                      const isHovered =
+                        hoveredBar?.section === "source" &&
+                        hoveredBar?.index === i;
+                      return (
+                        <div
+                          key={i}
+                          onMouseEnter={(e) =>
+                            setHoveredBar({
+                              section: "source",
+                              index: i,
+                              x: e.clientX,
+                              y: e.clientY,
+                              label: s.label ?? "",
+                              credits: s.credits,
+                              requests: s.requests,
+                              pct: s.pct,
+                            })
+                          }
+                          onMouseLeave={() => setHoveredBar(null)}
+                          className="group relative flex-1 flex flex-col justify-end cursor-pointer rounded-sm transition-all duration-150 hover:bg-[var(--inset)]/50"
+                          style={{ height: "100%" }}
+                        >
+                          <div
+                            className="w-full rounded-sm transition-all duration-150"
+                            style={{
+                              height: `${hPct}%`,
+                              backgroundColor:
+                                s.style === "filled"
+                                  ? "#404040"
+                                  : "transparent",
+                              opacity:
+                                s.credits === 0 ? 0.3 : isHovered ? 1 : 0.85,
+                              transform: isHovered
+                                ? "scaleY(1.06)"
+                                : "scaleY(1)",
+                              transformOrigin: "bottom",
+                              border:
+                                s.style === "stroked"
+                                  ? "1.5px solid #404040"
+                                  : "none",
+                              backgroundImage:
+                                s.style === "stroked"
+                                  ? "repeating-linear-gradient(45deg, rgba(64,64,64,0.35), rgba(64,64,64,0.35) 1px, transparent 1px, transparent 5px)"
+                                  : "none",
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Breakdown rows */}
+                <div className="space-y-3">
+                  {currentSpend.source.map((s, i) => (
+                    <div
+                      key={s.label}
+                      className={`flex items-center justify-between gap-2 text-[12.5px] rounded-md px-2 py-1 transition-colors duration-150 ${hoveredBar?.section === "source" && hoveredBar?.index === i ? "bg-[var(--inset)]/60" : ""}`}
+                      onMouseEnter={() =>
+                        setHoveredBar({
+                          section: "source",
+                          index: i,
+                          x: 0,
+                          y: 0,
+                          label: s.label ?? "",
+                          credits: s.credits,
+                          requests: s.requests,
+                          pct: s.pct,
+                        })
+                      }
+                      onMouseLeave={() => setHoveredBar(null)}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: "#404040" }}
+                        />
+                        <span className="text-foreground/85 truncate">
+                          {s.label}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0 tabular-nums">
+                        <span className="text-foreground/70 font-medium">
+                          {s.credits > 0 ? `${s.credits} cr` : "0 credits"}
+                        </span>
+                        <span className="text-muted-foreground/50">
+                          {s.requests} req
+                        </span>
+                        <span className="text-muted-foreground/40 w-[42px] text-right">
+                          {s.pct}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* By model */}
+              <div className="bg-background p-6">
+                <div className="eyebrow-label mb-2">By model</div>
+                <p className="text-[12px] text-muted-foreground/60 mb-6 leading-relaxed">
+                  Credit spend split across models, ordered by spend.
+                </p>
+                {/* Bar chart */}
+                <div className="relative h-24 w-full mb-6">
+                  <div className="absolute inset-0 flex items-end gap-[3px]">
+                    {currentSpend.model.map((m, i) => {
+                      const hPct =
+                        m.credits === 0
+                          ? 3
+                          : Math.max(8, (m.credits / maxModelCredits) * 100);
+                      const isHovered =
+                        hoveredBar?.section === "model" &&
+                        hoveredBar?.index === i;
+                      return (
+                        <div
+                          key={i}
+                          onMouseEnter={(e) =>
+                            setHoveredBar({
+                              section: "model",
+                              index: i,
+                              x: e.clientX,
+                              y: e.clientY,
+                              label: m.name ?? "",
+                              credits: m.credits,
+                              requests: m.requests,
+                              pct: m.pct,
+                            })
+                          }
+                          onMouseLeave={() => setHoveredBar(null)}
+                          className="group relative flex-1 flex flex-col justify-end cursor-pointer rounded-sm transition-all duration-150 hover:bg-[var(--inset)]/50"
+                          style={{ height: "100%" }}
+                        >
+                          <div
+                            className="w-full rounded-sm transition-all duration-150"
+                            style={{
+                              height: `${hPct}%`,
+                              backgroundColor:
+                                m.style === "filled"
+                                  ? "#404040"
+                                  : "transparent",
+                              opacity:
+                                m.credits === 0 ? 0.3 : isHovered ? 1 : 0.85,
+                              transform: isHovered
+                                ? "scaleY(1.06)"
+                                : "scaleY(1)",
+                              transformOrigin: "bottom",
+                              border:
+                                m.style === "stroked"
+                                  ? "1.5px solid #404040"
+                                  : "none",
+                              backgroundImage:
+                                m.style === "stroked"
+                                  ? "repeating-linear-gradient(45deg, rgba(64,64,64,0.35), rgba(64,64,64,0.35) 1px, transparent 1px, transparent 5px)"
+                                  : "none",
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Breakdown rows */}
+                <div className="space-y-3">
+                  {currentSpend.model.map((m, i) => (
+                    <div
+                      key={m.name}
+                      className={`flex items-center justify-between gap-2 text-[12.5px] rounded-md px-2 py-1 transition-colors duration-150 ${hoveredBar?.section === "model" && hoveredBar?.index === i ? "bg-[var(--inset)]/60" : ""}`}
+                      onMouseEnter={() =>
+                        setHoveredBar({
+                          section: "model",
+                          index: i,
+                          x: 0,
+                          y: 0,
+                          label: m.name!,
+                          credits: m.credits,
+                          requests: m.requests,
+                          pct: m.pct,
+                        })
+                      }
+                      onMouseLeave={() => setHoveredBar(null)}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: "#404040" }}
+                        />
+                        <span className="text-foreground/85 truncate">
+                          {m.name}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground/40 font-mono shrink-0">
+                          {m.family}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0 tabular-nums">
+                        <span className="text-foreground/70 font-medium">
+                          {m.credits > 0 ? `${m.credits} cr` : "0 credits"}
+                        </span>
+                        <span className="text-muted-foreground/50">
+                          {m.requests} req
+                        </span>
+                        <span className="text-muted-foreground/40 w-[42px] text-right">
+                          {m.pct}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* By API key */}
+              <div className="bg-background p-6">
+                <div className="eyebrow-label mb-2">By API key</div>
+                <p className="text-[12px] text-muted-foreground/60 mb-6 leading-relaxed">
+                  Spend per key. Deleted keys appear as &lsquo;Deleted
+                  key&rsquo;.
+                </p>
+                {currentSpend.key.length > 0 ? (
+                  <>
+                    <div className="relative h-24 w-full mb-6">
+                      <div className="absolute inset-0 flex items-end gap-[3px]">
+                        {currentSpend.key.map((k, i) => {
+                          const hPct =
+                            k.credits === 0
+                              ? 3
+                              : Math.max(8, (k.credits / maxKeyCredits) * 100);
+                          const isHovered =
+                            hoveredBar?.section === "key" &&
+                            hoveredBar?.index === i;
+                          return (
+                            <div
+                              key={i}
+                              onMouseEnter={(e) =>
+                                setHoveredBar({
+                                  section: "key",
+                                  index: i,
+                                  x: e.clientX,
+                                  y: e.clientY,
+                                  label: k.name ?? "",
+                                  credits: k.credits,
+                                  requests: k.requests,
+                                  pct: k.pct,
+                                })
+                              }
+                              onMouseLeave={() => setHoveredBar(null)}
+                              className="group relative flex-1 flex flex-col justify-end cursor-pointer rounded-sm transition-all duration-150 hover:bg-[var(--inset)]/50"
+                              style={{ height: "100%" }}
+                            >
+                              <div
+                                className="w-full rounded-sm transition-all duration-150"
+                                style={{
+                                  height: `${hPct}%`,
+                                  backgroundColor:
+                                    k.style === "filled"
+                                      ? "#404040"
+                                      : "transparent",
+                                  opacity:
+                                    k.credits === 0
+                                      ? 0.3
+                                      : isHovered
+                                        ? 1
+                                        : 0.85,
+                                  transform: isHovered
+                                    ? "scaleY(1.06)"
+                                    : "scaleY(1)",
+                                  transformOrigin: "bottom",
+                                  border:
+                                    k.style === "stroked"
+                                      ? "1.5px solid #404040"
+                                      : "none",
+                                  backgroundImage:
+                                    k.style === "stroked"
+                                      ? "repeating-linear-gradient(45deg, rgba(64,64,64,0.35), rgba(64,64,64,0.35) 1px, transparent 1px, transparent 5px)"
+                                      : "none",
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="space-y-2.5">
+                      {currentSpend.key.map((k, i) => (
+                        <div
+                          key={k.name}
+                          className={`flex items-center justify-between gap-2 text-[12.5px] rounded-md px-2 py-1 transition-colors duration-150 ${hoveredBar?.section === "key" && hoveredBar?.index === i ? "bg-[var(--inset)]/60" : ""}`}
+                          onMouseEnter={() =>
+                            setHoveredBar({
+                              section: "key",
+                              index: i,
+                              x: 0,
+                              y: 0,
+                              label: k.name ?? "",
+                              credits: k.credits,
+                              requests: k.requests,
+                              pct: k.pct,
+                            })
+                          }
+                          onMouseLeave={() => setHoveredBar(null)}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span
+                              className="h-2 w-2 rounded-full shrink-0"
+                              style={{ backgroundColor: "#404040" }}
+                            />
+                            <span className="font-mono text-[11.5px] text-foreground/85 truncate">
+                              {k.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0 tabular-nums">
+                            <span className="text-foreground/70 font-medium">
+                              {k.credits > 0 ? `${k.credits} cr` : "0 credits"}
+                            </span>
+                            <span className="text-muted-foreground/50">
+                              {k.requests} req
+                            </span>
+                            <span className="text-muted-foreground/40 w-[42px] text-right">
+                              {k.pct}%
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center h-[156px] text-center">
+                    <span className="text-[13px] text-muted-foreground/50">
+                      No API key usage in this range.
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Section>
+
+          {/* ── Floating tooltip for credit spend bars ── */}
+          {hoveredBar && hoveredBar.x > 0 && (
+            <div
+              className="pointer-events-none fixed z-50 rounded-lg border border-border bg-background px-3.5 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] animate-fade-in"
+              style={{
+                left: hoveredBar.x + 12,
+                top: hoveredBar.y - 8,
+                transform: "translateY(-100%)",
+              }}
+            >
+              <div className="font-display text-[12.5px] font-semibold text-foreground mb-1">
+                {hoveredBar.label}
+              </div>
+              <div className="flex items-center gap-3 text-[11.5px] tabular-nums">
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">
+                    {hoveredBar.credits}
+                  </span>{" "}
+                  credits
+                </span>
+                <span className="h-2 w-px bg-border" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">
+                    {hoveredBar.requests}
+                  </span>{" "}
+                  req
+                </span>
+                <span className="h-2 w-px bg-border" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-medium">
+                    {hoveredBar.pct}%
+                  </span>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ── Narrative Breakdown — card-based with visual hierarchy ── */}
           <Section
             title="How is my API being used?"
             hint="Key observations from the last 30 days of usage."
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8 pt-1">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Card 1: API integration */}
               <div
-                className="space-y-3"
+                className="rounded-lg border border-border/50 bg-[var(--inset)]/20 p-5 space-y-4"
                 aria-label="Programmatic API integration breakdown"
               >
-                <div>
-                  <span className="font-display text-[16px] font-semibold text-foreground">
-                    Programmatic API integration
+                <div className="flex items-start gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-background border border-border/40">
+                    <ChartBar size={15} className="text-foreground/70" />
                   </span>
-                  <p className="mt-1 text-[13px] text-muted-foreground leading-normal">
-                    Most requests are made through API keys rather than the
-                    Playground, indicating usage is primarily programmatic.
-                  </p>
+                  <div>
+                    <span className="font-display text-[14.5px] font-semibold text-foreground block">
+                      Programmatic API integration
+                    </span>
+                    <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">
+                      Most requests are made through API keys rather than the
+                      Playground, indicating usage is primarily programmatic.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1.5 border-t border-border/40 pt-2.5">
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">API Keys</span>
-                    <span className="font-display font-medium text-foreground">
+                <div className="space-y-2 border-t border-border/30 pt-3">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-foreground/70" />
+                      API Keys
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {currentData.totalOk - 8} requests
                     </span>
                   </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">Playground</span>
-                    <span className="font-display font-medium text-foreground">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+                      Playground
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       8 requests
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3" aria-label="Model usage breakdown">
-                <div>
-                  <span className="font-display text-[16px] font-semibold text-foreground">
-                    Silk Muga is most frequent (62%)
+              {/* Card 2: Model usage */}
+              <div
+                className="rounded-lg border border-border/50 bg-[var(--inset)]/20 p-5 space-y-4"
+                aria-label="Model usage breakdown"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-background border border-border/40">
+                    <ChartBar size={15} className="text-foreground/70" />
                   </span>
-                  <p className="mt-1 text-[13px] text-muted-foreground leading-normal">
-                    Silk Muga accounts for 62% of requests, making it the most
-                    frequently used model this month.
-                  </p>
+                  <div>
+                    <span className="font-display text-[14.5px] font-semibold text-foreground block">
+                      Silk Muga is most frequent (62%)
+                    </span>
+                    <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">
+                      Silk Muga accounts for 62% of requests, making it the most
+                      frequently used model this month.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1.5 border-t border-border/40 pt-2.5">
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">silk muga 1</span>
-                    <span className="font-display font-medium text-foreground">
+                <div className="space-y-2 border-t border-border/30 pt-3">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-foreground/70" />
+                      <span className="font-mono text-[11.5px]">
+                        silk muga 1
+                      </span>
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {Math.round(currentData.total * 0.62)} requests
                     </span>
                   </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">
-                      silk mulberry 1.5
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+                      <span className="font-mono text-[11.5px]">
+                        silk mulberry 1.5
+                      </span>
                     </span>
-                    <span className="font-display font-medium text-foreground">
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {Math.round(currentData.total * 0.38)} requests
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3" aria-label="Response status breakdown">
-                <div>
-                  <span className="font-display text-[16px] font-semibold text-foreground">
-                    Upstream response failures
+              {/* Card 3: Response failures */}
+              <div
+                className="rounded-lg border border-border/50 bg-[var(--inset)]/20 p-5 space-y-4"
+                aria-label="Response status breakdown"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-background border border-border/40">
+                    <ChartBar size={15} className="text-foreground/70" />
                   </span>
-                  <p className="mt-1 text-[13px] text-muted-foreground leading-normal">
-                    All recorded failures originated from upstream (5xx)
-                    responses rather than client validation errors.
-                  </p>
+                  <div>
+                    <span className="font-display text-[14.5px] font-semibold text-foreground block">
+                      Upstream response failures
+                    </span>
+                    <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">
+                      All recorded failures originated from upstream (5xx)
+                      responses rather than client validation errors.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1.5 border-t border-border/40 pt-2.5">
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">200 OK</span>
-                    <span className="font-display font-medium text-foreground">
+                <div className="space-y-2 border-t border-border/30 pt-3">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-[var(--success)]" />
+                      200 OK
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {currentData.totalOk} requests
                     </span>
                   </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">5xx errors</span>
-                    <span className="font-display font-medium text-foreground">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-red-400/60" />
+                      5xx errors
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {currentData.totalFail} requests
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3" aria-label="API key usage breakdown">
-                <div>
-                  <span className="font-display text-[16px] font-semibold text-foreground">
-                    Balanced API key usage
+              {/* Card 4: API key balance */}
+              <div
+                className="rounded-lg border border-border/50 bg-[var(--inset)]/20 p-5 space-y-4"
+                aria-label="API key usage breakdown"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-background border border-border/40">
+                    <ChartBar size={15} className="text-foreground/70" />
                   </span>
-                  <p className="mt-1 text-[13px] text-muted-foreground leading-normal">
-                    Traffic is evenly distributed across your production and
-                    development keys, indicating active testing alongside live
-                    usage.
-                  </p>
+                  <div>
+                    <span className="font-display text-[14.5px] font-semibold text-foreground block">
+                      Balanced API key usage
+                    </span>
+                    <p className="mt-1 text-[12.5px] text-muted-foreground leading-relaxed">
+                      Traffic is evenly distributed across your production and
+                      development keys, indicating active testing alongside live
+                      usage.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1.5 border-t border-border/40 pt-2.5">
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">prod-key-01</span>
-                    <span className="font-display font-medium text-foreground">
+                <div className="space-y-2 border-t border-border/30 pt-3">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-foreground/70" />
+                      <span className="font-mono text-[11.5px]">
+                        prod-key-01
+                      </span>
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {Math.round(currentData.total * 0.55)} requests
                     </span>
                   </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-muted-foreground">dev-key-02</span>
-                    <span className="font-display font-medium text-foreground">
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+                      <span className="font-mono text-[11.5px]">
+                        dev-key-02
+                      </span>
+                    </span>
+                    <span className="font-display font-medium text-foreground tabular-nums">
                       {Math.round(currentData.total * 0.45)} requests
                     </span>
                   </div>
@@ -720,7 +1383,7 @@ function Dialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-page-fade"
+        className="absolute inset-0 bg-background/60 backdrop-blur-md transition-opacity duration-150 animate-fade-in"
       />
       <div
         ref={ref}

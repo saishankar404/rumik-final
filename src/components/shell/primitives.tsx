@@ -1,4 +1,4 @@
-import { type ReactNode, type ComponentType } from "react";
+import { type ReactNode, type ComponentType, useRef } from "react";
 
 export function PageHeader({
   eyebrow,
@@ -146,7 +146,7 @@ export function MetricRow({
 
 export function Sparkline({
   values,
-  height = 18,
+  height = 28,
   onHover,
 }: {
   values: number[];
@@ -154,21 +154,50 @@ export function Sparkline({
   onHover?: (value: number | null, index: number | null) => void;
 }) {
   const max = Math.max(...values, 1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hoverIndexRef = useRef<number | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const barWidth = rect.width / values.length;
+    const idx = Math.max(
+      0,
+      Math.min(values.length - 1, Math.floor(x / barWidth)),
+    );
+    if (idx !== hoverIndexRef.current) {
+      hoverIndexRef.current = idx;
+      onHover?.(values[idx], idx);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    hoverIndexRef.current = null;
+    onHover?.(null, null);
+  };
+
   return (
     <div
-      className="flex items-end gap-[3px] group/spark"
+      ref={containerRef}
+      className="flex items-end gap-[2px] group/spark"
       style={{ height: `${height}px` }}
-      onMouseLeave={() => onHover?.(null, null)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       {values.map((v, i) => {
         const pct = Math.max(12, (v / max) * 100);
         return (
           <span
             key={i}
-            onMouseEnter={() => onHover?.(v, i)}
-            className="w-[4px] rounded-sm bg-foreground/30 hover:bg-foreground hover:scale-y-125 transition-all duration-150 cursor-pointer origin-bottom"
-            style={{ height: `${pct}%`, minHeight: "2px" }}
-          />
+            className="flex w-[6px] shrink-0 cursor-pointer items-end justify-center self-stretch"
+          >
+            <span
+              className="w-[5px] rounded-sm bg-foreground/25 transition-colors duration-75 origin-bottom group-hover/spark:bg-foreground/20 hover:!bg-foreground hover:scale-y-110"
+              style={{ height: `${pct}%`, minHeight: "2px" }}
+            />
+          </span>
         );
       })}
     </div>

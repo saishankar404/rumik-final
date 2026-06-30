@@ -143,7 +143,7 @@ function Dialog({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-fade-in"
+        className="absolute inset-0 bg-background/60 backdrop-blur-md transition-opacity duration-150 animate-fade-in"
       />
       {/* Centered Modal Card */}
       <div
@@ -198,7 +198,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
       {open && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-background/40 backdrop-blur-sm md:hidden animate-fade-in"
+          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-md md:hidden animate-fade-in"
           aria-hidden="true"
         />
       )}
@@ -289,7 +289,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
           ) : null}
         </div>
 
-        <nav className="mt-2 flex-1 overflow-y-auto px-3 pb-6 fade-mask-y animate-fade-in">
+        <nav className="mt-2 flex-1 overflow-y-auto px-3 pb-6 animate-fade-in">
           {NAV.map((group) => (
             <div key={group.label} className="mb-5">
               <div className="px-3 pb-2 pt-3 font-display text-[11px] font-medium tracking-tight text-muted-foreground/70">
@@ -329,7 +329,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
         </nav>
 
         <div className="hairline-t mx-3 mb-3 mt-1 flex items-center gap-2.5 rounded-md border-0 px-2 py-2.5">
-          <div className="grid h-7 w-7 place-items-center rounded-full bg-foreground/90 text-[11px] font-semibold text-background">
+          <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground/90 text-[11px] font-semibold text-background">
             S
           </div>
           <div className="min-w-0 flex-1 leading-tight">
@@ -338,7 +338,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
               shred@rumik.ai
             </div>
           </div>
-          <span className="rounded-full bg-[var(--success-soft)] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider text-[var(--success)]">
+          <span className="shrink-0 self-center rounded-full bg-[var(--success-soft)] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider text-[var(--success)]">
             Pro
           </span>
         </div>

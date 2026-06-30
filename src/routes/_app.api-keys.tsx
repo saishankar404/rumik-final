@@ -5,6 +5,7 @@ import {
   DotsThreeOutline,
   WarningCircle,
   Copy,
+  Check,
   X,
   Key,
 } from "@phosphor-icons/react";
@@ -251,12 +252,12 @@ function ApiKeys() {
               {/* ── Desktop table view ── */}
               <div className="hidden md:block">
                 <div className="grid grid-cols-[1.2fr_1.3fr_1.2fr_0.8fr_0.8fr_0.7fr_auto] gap-6 px-3 pb-3 eyebrow-label">
-                  <span>Name</span>
-                  <span>Prefix</span>
-                  <span>Scopes</span>
-                  <span>Rate limit</span>
-                  <span>Last used</span>
-                  <span>Status</span>
+                  <span className="text-left">Name</span>
+                  <span className="text-left">Prefix</span>
+                  <span className="text-left">Scopes</span>
+                  <span className="text-left">Rate limit</span>
+                  <span className="text-left">Last used</span>
+                  <span className="text-left">Status</span>
                   <span />
                 </div>
                 {keys.map((k: ApiKeyItem) => {
@@ -293,7 +294,10 @@ function ApiKeys() {
                           className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-150 transition-all"
                         >
                           {copiedName === k.name ? (
-                            "Copied!"
+                            <Check
+                              size={13}
+                              className="text-[var(--success)]"
+                            />
                           ) : (
                             <Copy size={13} />
                           )}
@@ -396,7 +400,10 @@ function ApiKeys() {
                           className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-150 transition-all"
                         >
                           {copiedName === k.name ? (
-                            "Copied!"
+                            <Check
+                              size={13}
+                              className="text-[var(--success)]"
+                            />
                           ) : (
                             <Copy size={13} />
                           )}
@@ -628,7 +635,7 @@ function Dialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-fade-in"
+        className="absolute inset-0 bg-background/60 backdrop-blur-md transition-opacity duration-150 animate-fade-in"
       />
       <div
         ref={modalRef}

@@ -447,7 +447,7 @@ function Logs() {
         </div>
       </div>
 
-      <div className="-mx-3 fade-mask-y animate-fade-in">
+      <div className="-mx-3 mt-6 animate-fade-in">
         {isLoading ? (
           <>
             {/* Desktop skeleton */}
@@ -470,7 +470,7 @@ function Logs() {
         ) : (
           <>
             {/* ── Desktop table view ── */}
-            <div className="hidden md:grid grid-cols-[110px_110px_140px_1fr_90px_70px_60px] gap-5 px-3 pb-2 eyebrow-label">
+            <div className="hidden md:grid grid-cols-[110px_110px_140px_1fr_90px_70px_60px] gap-5 px-3 pb-2.5 eyebrow-label border-b border-border/50">
               <span>Time</span>
               <span>Source</span>
               <span>Model</span>
