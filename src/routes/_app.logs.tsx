@@ -593,10 +593,10 @@ function Logs() {
           aria-label="Log details"
           className="fixed inset-y-0 right-0 z-30 flex w-full md:w-[440px] flex-col bg-background border-l border-border/80 shadow-[-12px_0_40px_-20px_rgba(0,0,0,0.18)] animate-slide-in-right"
         >
-          <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border/40">
-            <div className="min-w-0">
+          <div className="flex items-center justify-between px-4 md:px-6 py-3.5 md:py-4 border-b border-border/40">
+            <div className="min-w-0 pr-3">
               <div className="eyebrow-label">Request detail</div>
-              <div className="mt-1 truncate font-mono text-[12px] text-muted-foreground">
+              <div className="mt-1 truncate font-mono text-[11px] md:text-[12px] text-muted-foreground">
                 {open.id}
               </div>
             </div>
@@ -611,7 +611,7 @@ function Logs() {
               <X size={15} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 md:py-6 space-y-5 md:space-y-6">
             <Block title="Request metadata">
               <Field k="Time" v={open.ago} />
               <Field k="Integration key" v={open.key} />
@@ -621,10 +621,10 @@ function Logs() {
             <Block title="Request payload body">
               <div className="relative">
                 <div
-                  className={`rounded-md bg-[var(--inset)] p-3 font-mono text-[11.5px] leading-relaxed text-foreground/85 transition-all duration-150 overflow-x-auto ${
+                  className={`rounded-md bg-[var(--inset)] p-2.5 md:p-3 font-mono text-[11px] md:text-[11.5px] leading-relaxed text-foreground/85 transition-all duration-150 overflow-x-auto ${
                     codeExpanded
                       ? "max-h-none"
-                      : "max-h-[135px] overflow-hidden"
+                      : "max-h-[120px] md:max-h-[135px] overflow-hidden"
                   }`}
                 >
                   <pre>{`{
@@ -643,7 +643,7 @@ function Logs() {
                     <button
                       type="button"
                       onClick={() => setCodeExpanded(true)}
-                      className="absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded bg-foreground px-2.5 py-1 text-[11.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 shadow-sm"
+                      className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded bg-foreground px-2.5 py-1 text-[11px] md:text-[11.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 shadow-sm"
                     >
                       More
                     </button>
@@ -661,7 +661,7 @@ function Logs() {
                 k="Cost accrued"
                 v={`${open.credits > 0 ? `${open.credits.toFixed(2)} credits` : "—"}`}
               />
-              <div className="pt-4">
+              <div className="pt-3 md:pt-4">
                 <Waveform bars={open.tokOut} />
               </div>
             </Block>
@@ -681,7 +681,7 @@ function Block({
 }) {
   return (
     <div>
-      <div className="mb-2 eyebrow-label">{title}</div>
+      <div className="mb-2.5 md:mb-3 eyebrow-label">{title}</div>
       <div>{children}</div>
     </div>
   );
@@ -689,9 +689,11 @@ function Block({
 
 function Field({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-2 hairline-b last:border-b-0">
-      <span className="font-mono text-[11.5px] text-muted-foreground">{k}</span>
-      <span className="truncate font-display text-[12.5px] text-foreground/90 font-medium">
+    <div className="flex items-baseline justify-between gap-3 py-2.5 hairline-b last:border-b-0">
+      <span className="font-mono text-[11px] md:text-[11.5px] text-muted-foreground shrink-0">
+        {k}
+      </span>
+      <span className="truncate font-display text-[12px] md:text-[12.5px] text-foreground/90 font-medium text-right">
         {v}
       </span>
     </div>
