@@ -5,7 +5,7 @@
     "binding": "ASSETS",
     "directory": "../public"
   },
-  "name": "tanstack-start-ts-desktop-rumik-final",
+  "name": "tanstack-start-ts",
   "compatibility_flags": [
     "nodejs_compat"
   ],

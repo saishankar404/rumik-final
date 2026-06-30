@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import type { Icon } from "@phosphor-icons/react";
 
 export function PageHeader({
   eyebrow,
@@ -14,9 +15,7 @@ export function PageHeader({
   return (
     <header className="flex items-end justify-between gap-8 pb-12">
       <div className="min-w-0 animate-fade-in">
-        {eyebrow ? (
-          <div className="eyebrow-label mb-3">{eyebrow}</div>
-        ) : null}
+        {eyebrow ? <div className="eyebrow-label mb-3">{eyebrow}</div> : null}
         <h1 className="font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.025em] text-foreground">
           {title}
         </h1>
@@ -26,7 +25,9 @@ export function PageHeader({
           </p>
         ) : null}
       </div>
-      {actions ? <div className="shrink-0 flex items-center gap-2">{actions}</div> : null}
+      {actions ? (
+        <div className="shrink-0 flex items-center gap-2">{actions}</div>
+      ) : null}
     </header>
   );
 }
@@ -45,14 +46,18 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section className={`py-12 first:pt-2 hairline-b last:border-b-0 ${className}`}>
+    <section
+      className={`py-12 first:pt-2 hairline-b last:border-b-0 ${className}`}
+    >
       <div className="mb-7 flex items-baseline justify-between gap-6">
         <div className="min-w-0">
           <h2 className="font-display text-[15px] font-medium tracking-[-0.01em] text-foreground">
             {title}
           </h2>
           {hint ? (
-            <p className="mt-1 text-[12.5px] text-muted-foreground/80">{hint}</p>
+            <p className="mt-1 text-[12.5px] text-muted-foreground/80">
+              {hint}
+            </p>
           ) : null}
         </div>
         {trailing ? <div className="shrink-0">{trailing}</div> : null}
@@ -70,9 +75,7 @@ export function InsetPanel({
   className?: string;
 }) {
   return (
-    <div
-      className={`rounded-lg bg-[var(--inset)] px-5 py-4 ${className}`}
-    >
+    <div className={`rounded-lg bg-[var(--inset)] px-5 py-4 ${className}`}>
       {children}
     </div>
   );
@@ -104,7 +107,9 @@ export function StatusPill({
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-[3px] text-[11px] font-medium leading-none tracking-tight ${styles[tone]}`}
     >
-      {dot ? <span className={`h-1.5 w-1.5 rounded-full ${dotColor[tone]}`} /> : null}
+      {dot ? (
+        <span className={`h-1.5 w-1.5 rounded-full ${dotColor[tone]}`} />
+      ) : null}
       {children}
     </span>
   );
@@ -151,8 +156,8 @@ export function Sparkline({
 }) {
   const max = Math.max(...values, 1);
   return (
-    <div 
-      className="flex items-end gap-[3px] group/spark" 
+    <div
+      className="flex items-end gap-[3px] group/spark"
       style={{ height: `${height}px` }}
       onMouseLeave={() => onHover?.(null, null)}
     >
@@ -178,11 +183,12 @@ export function Waveform({
   bars?: number;
   playing?: boolean;
 }) {
-  const heights = Array.from({ length: bars }, (_, i) =>
-    0.35 + 0.65 * Math.abs(Math.sin((i + 1) * 0.7))
+  const heights = Array.from(
+    { length: bars },
+    (_, i) => 0.35 + 0.65 * Math.abs(Math.sin((i + 1) * 0.7)),
   );
   return (
-    <div className="flex h-7 items-center gap-[2px]">
+    <div className="flex h-7 items-center gap-[2px]" aria-hidden="true">
       {heights.map((h, i) => (
         <span
           key={i}
@@ -193,6 +199,91 @@ export function Waveform({
           }}
         />
       ))}
+    </div>
+  );
+}
+
+export function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`shimmer rounded-md ${className}`} />;
+}
+
+export function SkeletonText({
+  lines = 3,
+  className = "",
+}: {
+  lines?: number;
+  className?: string;
+}) {
+  const widths = ["w-full", "w-4/5", "w-3/5", "w-2/3", "w-1/2"];
+  return (
+    <div className={`space-y-2 ${className}`}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton key={i} className={`h-3.5 ${widths[i % widths.length]}`} />
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonRow({
+  cols = 5,
+  className = "",
+}: {
+  cols?: number;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`grid items-center gap-6 px-3 py-4 ${className}`}
+      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}
+    >
+      {Array.from({ length: cols }).map((_, i) => (
+        <Skeleton key={i} className="h-4" />
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonCard({ className = "" }: { className?: string }) {
+  return (
+    <div className={`space-y-3 ${className}`}>
+      <Skeleton className="h-3 w-20" />
+      <Skeleton className="h-8 w-32" />
+      <Skeleton className="h-3 w-16" />
+    </div>
+  );
+}
+
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+  className = "",
+}: {
+  icon?: Icon;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`flex flex-col items-center justify-center py-16 text-center ${className}`}
+    >
+      {Icon && (
+        <Icon
+          className="mb-4 h-8 w-8 text-muted-foreground/30"
+          weight="thin"
+          aria-hidden="true"
+        />
+      )}
+      <p className="text-[14px] font-medium text-foreground/80">{title}</p>
+      {description && (
+        <p className="mt-1 text-[13px] text-muted-foreground/60 max-w-[320px]">
+          {description}
+        </p>
+      )}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }
