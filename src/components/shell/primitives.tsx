@@ -1,5 +1,4 @@
-import { type ReactNode } from "react";
-import type { Icon } from "@phosphor-icons/react";
+import { type ReactNode, type ComponentType } from "react";
 
 export function PageHeader({
   eyebrow,
@@ -260,7 +259,8 @@ export function EmptyState({
   action,
   className = "",
 }: {
-  icon?: Icon;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon?: ComponentType<any>;
   title: string;
   description?: string;
   action?: ReactNode;

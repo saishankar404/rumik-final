@@ -18,7 +18,7 @@ import {
   Brain,
   Check,
 } from "@phosphor-icons/react";
-import { Waveform } from "../components/shell/primitives";
+import { Waveform, EmptyState } from "../components/shell/primitives";
 import {
   AIVoiceInput,
   AudioUploadCard,
@@ -279,11 +279,11 @@ function Playground() {
   }, [text, activeModel, tone, temp, isEmpty, isGenerating]);
 
   return (
-    <div className="flex h-full min-h-0">
+    <div className="flex flex-col md:flex-row h-full min-h-0">
       {/* ── Left: Editor ── */}
       <div className="flex flex-1 flex-col min-w-0 overflow-y-auto">
         {/* Header — title + mode toggle */}
-        <div className="flex items-center justify-between px-10 pt-8 pb-0">
+        <div className="flex items-center justify-between px-10 lg:px-6 pt-8 pb-0">
           <div>
             <h1 className="text-[17px] font-semibold text-foreground tracking-[-0.015em]">
               {mode === "tts" ? "Text to speech" : "Speech to text"}
@@ -301,6 +301,11 @@ function Playground() {
               <button
                 key={m}
                 onClick={() => setMode(m)}
+                aria-label={
+                  m === "tts"
+                    ? "Switch to text to speech"
+                    : "Switch to speech to text"
+                }
                 className={`relative rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-200 ${
                   mode === m
                     ? "text-background"
@@ -342,6 +347,7 @@ function Playground() {
                     onChange={(e) => setText(e.target.value)}
                     spellCheck={false}
                     rows={16}
+                    aria-label="Text to synthesize"
                     placeholder="Start typing here or paste any text you want to turn into speech…"
                     className="w-full resize-none bg-transparent text-[15.5px] leading-[1.75] tracking-[-0.005em] text-foreground outline-none placeholder:text-muted-foreground/30"
                   />
@@ -349,12 +355,16 @@ function Playground() {
 
                 {/* Editor footer — tools + credits + char count + Generate */}
                 <div className="flex items-center gap-2 border-t border-border/40 px-4 py-2.5">
-                  <button className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]">
+                  <button
+                    aria-label="Enhance text"
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
+                  >
                     <MagicWand className="h-3.5 w-3.5" />
                     Enhance
                   </button>
                   <button
                     onClick={() => setText("")}
+                    aria-label="Clear text"
                     className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
                   >
                     <ArrowCounterClockwise className="h-3.5 w-3.5" />
@@ -416,7 +426,7 @@ function Playground() {
               </div>
 
               {/* ── Tags area — cross-fade between get-started and emotion tags ── */}
-              <div className="px-10 pt-5 pb-4 min-h-[120px]">
+              <div className="px-10 lg:px-6 pt-5 pb-4 min-h-[120px]">
                 <AnimatePresence mode="wait">
                   {isEmpty ? (
                     <motion.div
@@ -464,6 +474,7 @@ function Playground() {
                               key={t.tag}
                               onClick={() => insertTag(t.tag)}
                               title={t.hint}
+                              aria-label={t.hint}
                               className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13.5px] transition-all duration-150 active:scale-[0.96] ${
                                 flashing
                                   ? "border-foreground/40 bg-foreground/[0.06] text-foreground scale-[0.96]"
@@ -495,11 +506,21 @@ function Playground() {
                     exit={{ opacity: 0, y: 12, filter: "blur(4px)" }}
                     transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
                     className="mx-10 mb-10 rounded-xl border border-border/60 bg-[var(--inset)]/30"
+                    tabIndex={0}
+                    role="button"
+                    aria-label={isPlaying ? "Pause audio" : "Play audio"}
+                    onKeyDown={(e) => {
+                      if (e.key === " " || e.key === "Enter") {
+                        e.preventDefault();
+                        setIsPlaying((p) => !p);
+                      }
+                    }}
                   >
                     <div className="flex items-center gap-3 px-4 py-3.5">
                       {/* Play / Pause button */}
                       <button
                         onClick={() => setIsPlaying((p) => !p)}
+                        aria-label={isPlaying ? "Pause audio" : "Play audio"}
                         className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-150 active:scale-[0.96]"
                       >
                         {isPlaying ? (
@@ -518,7 +539,11 @@ function Playground() {
                       </span>
 
                       {/* Visualizer bars — full width edge-to-edge */}
-                      <div className="flex h-10 flex-1 items-center gap-[2px] min-w-0">
+                      <div
+                        className="flex h-10 flex-1 items-center gap-[2px] min-w-0"
+                        role="img"
+                        aria-label="Audio waveform visualization"
+                      >
                         {[...Array(64)].map((_, i) => (
                           <div
                             key={i}
@@ -540,7 +565,10 @@ function Playground() {
                       </div>
 
                       {/* Download button */}
-                      <button className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]">
+                      <button
+                        aria-label="Download audio"
+                        className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96]"
+                      >
                         <Download className="h-4 w-4" />
                       </button>
                     </div>
@@ -596,13 +624,18 @@ function Playground() {
       </div>
 
       {/* ── Right: Settings panel ── */}
-      <aside className="w-[300px] shrink-0 border-l border-border/50 flex flex-col overflow-hidden">
+      <aside className="w-full md:w-[300px] lg:w-[280px] shrink-0 border-l border-border/50 flex flex-col overflow-hidden">
         {/* Tab bar */}
-        <div className="flex items-center gap-0 border-b border-border/50 px-5">
+        <div
+          role="tablist"
+          className="flex items-center gap-0 border-b border-border/50 px-5"
+        >
           {(["settings", "experiments"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
+              role="tab"
+              aria-selected={tab === t}
               className={`relative px-2 py-4 text-[14px] capitalize transition-colors ${
                 tab === t
                   ? "text-foreground font-medium"
@@ -949,12 +982,12 @@ function ExperimentsPanel({
 }) {
   if (experiments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center px-8">
-        <p className="text-[14px] text-muted-foreground">No experiments yet.</p>
-        <p className="text-[13px] text-muted-foreground/50 mt-1">
-          Synthesize something to save it here.
-        </p>
-      </div>
+      <EmptyState
+        icon={Waveform}
+        title="No experiments yet"
+        description="Synthesize something to save it here."
+        className="py-20 px-8"
+      />
     );
   }
 
