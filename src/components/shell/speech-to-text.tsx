@@ -8,6 +8,7 @@ import {
   type ReactElement,
   type DragEvent as ReactDragEvent,
   type ChangeEvent as ReactChangeEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
   Children,
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -66,6 +67,7 @@ export function AIVoiceInput({
           )}
           type="button"
           onClick={handleClick}
+          aria-label={submitted ? "Stop recording" : "Start recording"}
         >
           {submitted ? (
             <div
@@ -85,11 +87,16 @@ export function AIVoiceInput({
             "font-mono text-sm tabular-nums transition-opacity duration-300",
             submitted ? "text-foreground/70" : "text-muted-foreground/40",
           )}
+          aria-label="Recording duration"
+          aria-live="polite"
         >
           {formatTime(time)}
         </span>
 
-        <div className="flex h-4 w-64 items-center justify-center gap-0.5">
+        <div
+          className="flex h-4 w-64 items-center justify-center gap-0.5"
+          aria-hidden="true"
+        >
           {[...Array(visualizerBars)].map((_, i) => (
             <div
               key={i}
@@ -111,7 +118,7 @@ export function AIVoiceInput({
           ))}
         </div>
 
-        <p className="h-4 text-xs text-muted-foreground/70">
+        <p className="h-4 text-xs text-muted-foreground/70" aria-live="polite">
           {submitted ? "Listening..." : "Click to speak"}
         </p>
       </div>
@@ -161,7 +168,12 @@ function Waveform({ width = 300, height = 40, bars = 60 }: WaveformProps) {
   }, [width, height, bars]);
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden="true"
+    >
       {barsArray}
     </svg>
   );
@@ -296,6 +308,7 @@ function AudioComponent({
           >
             <button
               onClick={handleRemove}
+              aria-label="Remove uploaded file"
               className="absolute -right-2 -top-2 z-30 grid h-5 w-5 place-items-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:scale-110"
             >
               <X size={12} />
@@ -385,6 +398,16 @@ export function AudioUploadCard({
     if (!isUploading && !uploadedFile) fileInputRef.current?.click();
   }, [isUploading, uploadedFile]);
 
+  const handleKeyDown = useCallback(
+    (e: ReactKeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (!isUploading && !uploadedFile) fileInputRef.current?.click();
+      }
+    },
+    [isUploading, uploadedFile],
+  );
+
   return (
     <motion.div
       className={cn("relative mx-auto w-full max-w-md", className)}
@@ -397,10 +420,14 @@ export function AudioUploadCard({
           <div className="relative mx-auto w-full">
             <div
               className="relative"
+              role="button"
+              aria-label="Upload audio file"
+              tabIndex={0}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={handleBaseClick}
+              onKeyDown={handleKeyDown}
             >
               <UploadCardBase
                 isDragOver={isDragOver}
