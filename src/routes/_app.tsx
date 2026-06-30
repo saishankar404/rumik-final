@@ -26,7 +26,12 @@ import {
 } from "@phosphor-icons/react";
 import { NAV } from "../components/shell/nav";
 import { Kbd } from "../components/shell/primitives";
-import { useWorkspace, workspaceStore, WorkspaceType } from "../lib/store";
+import {
+  useWorkspace,
+  workspaceStore,
+  WorkspaceType,
+  useFocusTrap,
+} from "../lib/store";
 
 export const Route = createFileRoute("/_app")({
   component: AppShell,
@@ -71,7 +76,7 @@ function AppShell() {
 
       {/* ── Center Dialog: Command Palette ── */}
       {cmdOpen && (
-        <Dialog onClose={() => setCmdOpen(false)}>
+        <Dialog onClose={() => setCmdOpen(false)} ariaLabel="Command palette">
           <CommandPalette onClose={() => setCmdOpen(false)} />
         </Dialog>
       )}
@@ -96,10 +101,22 @@ function NoiseOverlay() {
 function Dialog({
   children,
   onClose,
+  ariaLabel,
 }: {
   children: React.ReactNode;
   onClose: () => void;
+  ariaLabel?: string;
 }) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(modalRef, true);
+
+  const capturedRef = useRef(false);
+  const previousActiveRef = useRef<HTMLElement | null>(null);
+  if (!capturedRef.current) {
+    capturedRef.current = true;
+    previousActiveRef.current = document.activeElement as HTMLElement | null;
+  }
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -107,6 +124,10 @@ function Dialog({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
+
+  useEffect(() => {
+    return () => previousActiveRef.current?.focus();
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -116,7 +137,13 @@ function Dialog({
         className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-200 animate-fade-in"
       />
       {/* Centered Modal Card */}
-      <div className="relative w-full max-w-[860px] -translate-y-6 rounded-xl border border-border/80 bg-background p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] pop-in overflow-hidden z-10">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={ariaLabel}
+        className="relative w-full max-w-[860px] -translate-y-6 rounded-xl border border-border/80 bg-background p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] pop-in overflow-hidden z-10"
+      >
         {children}
       </div>
     </div>
@@ -382,11 +409,24 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
 function CommandPalette({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query]);
+
+  useEffect(() => {
+    if (!listRef.current) return;
+    const options =
+      listRef.current.querySelectorAll<HTMLElement>('[role="option"]');
+    options[activeIndex]?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
 
   const items = [
     {
@@ -425,6 +465,22 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
     item.label.toLowerCase().includes(query.toLowerCase()),
   );
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(i + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (filtered[activeIndex]) {
+        filtered[activeIndex].action();
+        onClose();
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/40">
@@ -436,6 +492,8 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          aria-label="Search commands"
           placeholder="Where would you like to go?"
           className="flex-1 bg-transparent text-[16px] outline-none placeholder:text-muted-foreground/40"
         />
@@ -446,17 +504,28 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
           <X size={15} />
         </button>
       </div>
-      <div className="p-1.5 max-h-[420px] overflow-y-auto">
+      <div
+        ref={listRef}
+        role="listbox"
+        aria-label="Navigation results"
+        className="p-1.5 max-h-[420px] overflow-y-auto"
+      >
         {filtered.map((item, idx) => {
           const Icon = item.icon;
           return (
             <button
               key={idx}
+              role="option"
+              aria-selected={idx === activeIndex}
               onClick={() => {
                 item.action();
                 onClose();
               }}
-              className="flex w-full items-center gap-3.5 rounded-lg px-4 py-3 text-left text-[15px] hover:bg-[var(--inset)] transition-colors duration-75 active:scale-[0.99]"
+              className={`flex w-full items-center gap-3.5 rounded-lg px-4 py-3 text-left text-[15px] transition-colors duration-75 active:scale-[0.99] ${
+                idx === activeIndex
+                  ? "bg-[var(--inset)]"
+                  : "hover:bg-[var(--inset)]"
+              }`}
             >
               <Icon size={17} className="text-muted-foreground/60 shrink-0" />
               <span className="flex-1 text-foreground/90">{item.label}</span>
