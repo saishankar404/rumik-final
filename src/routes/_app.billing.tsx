@@ -122,7 +122,7 @@ function Billing() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className={`px-4 md:px-6 py-7 ${
+              className={`px-4 md:px-4 py-5 md:px-6 md:py-7 ${
                 i > 0 ? "border-t border-border md:border-t-0 md:border-l" : ""
               }`}
             >
@@ -135,7 +135,7 @@ function Billing() {
           className="grid grid-cols-1 md:grid-cols-3 hairline-b border-t animate-fade-in"
           aria-label="Billing overview"
         >
-          <div className="px-4 md:px-6 py-7">
+          <div className="px-4 md:px-4 py-5 md:px-6 md:py-7">
             <div className="eyebrow-label">Credit balance</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-display text-[40px] font-medium leading-none tracking-[-0.03em] tabular-nums">
@@ -147,7 +147,7 @@ function Billing() {
               Never expires
             </div>
           </div>
-          <div className="border-t border-border md:border-t-0 md:border-l px-4 md:px-6 py-7">
+          <div className="border-t border-border md:border-t-0 md:border-l px-4 md:px-4 py-5 md:px-6 md:py-7">
             <div className="eyebrow-label">Burn — 30d</div>
             <div className="mt-3 font-display text-[28px] tracking-[-0.02em] tabular-nums">
               {billData.burned}
@@ -156,7 +156,7 @@ function Billing() {
               credits used
             </div>
           </div>
-          <div className="border-t border-border md:border-t-0 md:border-l px-4 md:px-6 py-7">
+          <div className="border-t border-border md:border-t-0 md:border-l px-4 md:px-4 py-5 md:px-6 md:py-7">
             <div className="eyebrow-label">Requests — 30d</div>
             <div className="mt-3 font-display text-[28px] tracking-[-0.02em] tabular-nums">
               {billData.requests}

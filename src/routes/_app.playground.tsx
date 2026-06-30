@@ -607,7 +607,7 @@ function Playground() {
       {/* ── Left: Editor ── */}
       <div className="flex flex-1 flex-col min-w-0 overflow-y-auto">
         {/* Header — title + mode toggle */}
-        <div className="flex items-center justify-between px-10 lg:px-6 pt-8 pb-0">
+        <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 pt-8 pb-0">
           <div>
             <h1 className="text-[17px] font-semibold text-foreground tracking-[-0.015em]">
               {mode === "tts" ? "Text to speech" : "Speech to text"}
@@ -662,7 +662,7 @@ function Playground() {
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
             >
               {/* Editor card — no border glow on focus */}
-              <div className="mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
+              <div className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
                 {/* Textarea */}
                 <div className="px-5 pt-5">
                   <textarea
@@ -750,7 +750,7 @@ function Playground() {
               </div>
 
               {/* ── Tags area — cross-fade between get-started and emotion tags ── */}
-              <div className="px-10 lg:px-6 pt-5 pb-4 min-h-[120px]">
+              <div className="px-4 sm:px-6 md:px-10 pt-5 pb-4 min-h-[120px]">
                 <AnimatePresence mode="wait">
                   {isEmpty ? (
                     <motion.div
@@ -821,7 +821,7 @@ function Playground() {
               </div>
 
               {/* ── Agentic command bar ── */}
-              <div className="mx-10 mb-6">
+              <div className="mx-4 sm:mx-6 md:mx-10 mb-6">
                 <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-[var(--inset)]/30 px-4 py-3">
                   <span className="font-mono text-[14px] text-muted-foreground/40 select-none">
                     {">"}
@@ -890,7 +890,7 @@ function Playground() {
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     exit={{ opacity: 0, y: 12, filter: "blur(4px)" }}
                     transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
-                    className="mx-10 mb-10 rounded-xl border border-border/60 bg-[var(--inset)]/30"
+                    className="mx-4 sm:mx-6 md:mx-10 mb-10 rounded-xl border border-border/60 bg-[var(--inset)]/30"
                     tabIndex={0}
                     role="button"
                     aria-label={isPlaying ? "Pause audio" : "Play audio"}
@@ -969,7 +969,7 @@ function Playground() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="mx-10 mt-6 rounded-xl border border-border/60"
+              className="mx-4 sm:mx-6 md:mx-10 mt-6 rounded-xl border border-border/60"
             >
               <div className="flex flex-col items-center gap-8 px-5 py-10">
                 {/* Microphone input */}

@@ -23,6 +23,7 @@ import {
   Waves,
   BookOpen,
   Command,
+  List,
 } from "@phosphor-icons/react";
 import { NAV } from "../components/shell/nav";
 import { Kbd } from "../components/shell/primitives";
@@ -42,8 +43,13 @@ function AppShell() {
   const isPlayground =
     pathname === "/playground" || pathname.startsWith("/playground/");
 
-  // Dialog states
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
@@ -53,9 +59,12 @@ function AppShell() {
       >
         Skip to content
       </a>
-      <Sidebar />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar onSearchClick={() => setCmdOpen(true)} />
+        <Topbar
+          onSearchClick={() => setCmdOpen(true)}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
         <main
           id="main-content"
           role="main"
@@ -67,7 +76,7 @@ function AppShell() {
               <Outlet />
             </div>
           ) : (
-            <div className="mx-auto w-full max-w-[1100px] px-10 pb-24 pt-12 animate-page-fade">
+            <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-6 md:px-10 pb-24 pt-8 md:pt-12 animate-page-fade safe-area-bottom">
               <Outlet />
             </div>
           )}
@@ -142,7 +151,7 @@ function Dialog({
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
-        className="relative w-full max-w-[860px] -translate-y-6 rounded-xl border border-border/80 bg-background p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] pop-in overflow-hidden z-10"
+        className="relative w-[calc(100vw-2rem)] max-w-[860px] -translate-y-6 rounded-xl border border-border/80 bg-background p-2 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] pop-in overflow-hidden z-10"
       >
         {children}
       </div>
@@ -151,7 +160,7 @@ function Dialog({
 }
 
 /* ─── Sidebar Component ─── */
-function Sidebar() {
+function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const ws = useWorkspace();
   const [wsOpen, setWsOpen] = useState(false);
@@ -165,6 +174,18 @@ function Sidebar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
+  // Lock body scroll when drawer is open on mobile
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const workspaces = [
     { name: "Personal workspace", hint: "shred@rumik.ai" },
     { name: "Acme Studio", hint: "team — 4 members" },
@@ -172,140 +193,168 @@ function Sidebar() {
   ];
 
   return (
-    <aside
-      role="navigation"
-      aria-label="Main navigation"
-      className="sticky top-0 flex h-screen w-[244px] shrink-0 flex-col bg-[var(--sidebar)] hairline-b border-b-0 border-r"
-    >
-      <div ref={wsRef} className="relative px-3 pt-3">
-        <button
-          onClick={() => setWsOpen((v) => !v)}
-          aria-haspopup="menu"
-          aria-expanded={wsOpen}
-          className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-[var(--sidebar-accent)]/70 animate-fade-in"
-        >
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-foreground text-background">
-            <span className="font-display text-[12px] font-semibold">
-              {ws === "Personal workspace"
-                ? "P"
-                : ws === "Acme Studio"
-                  ? "A"
-                  : "L"}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1 leading-tight">
-            <div className="truncate font-display text-[13.5px] font-semibold">
-              Rumik
-            </div>
-            <div className="truncate text-[11px] text-muted-foreground">
-              {ws}
-            </div>
-          </div>
-          <CaretUpDown
-            size={14}
-            className="text-muted-foreground/75 shrink-0"
-          />
-        </button>
-        {wsOpen ? (
-          <div
-            role="menu"
-            className="absolute left-3 right-3 top-[calc(100%+4px)] z-20 rounded-lg border border-border bg-background p-1.5 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.25)] pop-in"
-          >
-            <div className="px-2 pb-1.5 pt-1 font-display text-[10.5px] font-medium tracking-tight text-muted-foreground/80">
-              Switch workspace
-            </div>
-            {workspaces.map((w) => {
-              const active = w.name === ws;
-              return (
-                <button
-                  key={w.name}
-                  role="menuitem"
-                  onClick={() => {
-                    workspaceStore.setWorkspace(w.name as WorkspaceType);
-                    setWsOpen(false);
-                  }}
-                  className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--inset)] active:scale-[0.98]"
-                >
-                  <span className="grid h-6 w-6 place-items-center rounded bg-[var(--inset)] text-muted-foreground">
-                    <Building size={14} />
-                  </span>
-                  <span className="min-w-0 flex-1 leading-tight">
-                    <span className="block truncate text-[12.5px] text-foreground">
-                      {w.name}
-                    </span>
-                    <span className="block truncate text-[10.5px] text-muted-foreground">
-                      {w.hint}
-                    </span>
-                  </span>
-                  {active ? (
-                    <Check size={14} className="text-foreground shrink-0" />
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-      </div>
+    <>
+      {/* Mobile backdrop */}
+      {open && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-background/40 backdrop-blur-sm md:hidden animate-fade-in"
+          aria-hidden="true"
+        />
+      )}
 
-      <nav className="mt-2 flex-1 overflow-y-auto px-3 pb-6 fade-mask-y animate-fade-in">
-        {NAV.map((group) => (
-          <div key={group.label} className="mb-5">
-            <div className="px-3 pb-2 pt-3 font-display text-[11px] font-medium tracking-tight text-muted-foreground/70">
-              {group.label}
+      <aside
+        role="navigation"
+        aria-label="Main navigation"
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] shrink-0 flex-col bg-[var(--sidebar)] hairline-b border-b-0 border-r transition-transform duration-200 ease-out safe-area-top ${
+          open ? "translate-x-0" : "-translate-x-full"
+        } md:sticky md:top-0 md:z-auto md:w-[244px] md:translate-x-0 md:transition-none`}
+      >
+        <div ref={wsRef} className="relative px-3 pt-3">
+          <button
+            onClick={() => setWsOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={wsOpen}
+            className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-[var(--sidebar-accent)]/70 animate-fade-in"
+          >
+            <div className="grid h-7 w-7 place-items-center rounded-md bg-foreground text-background">
+              <span className="font-display text-[12px] font-semibold">
+                {ws === "Personal workspace"
+                  ? "P"
+                  : ws === "Acme Studio"
+                    ? "A"
+                    : "L"}
+              </span>
             </div>
-            <ul className="space-y-0.5">
-              {group.items.map((item) => {
-                const active =
-                  item.to === "/"
-                    ? pathname === "/"
-                    : pathname === item.to ||
-                      pathname.startsWith(item.to + "/");
-                const Icon = item.icon;
+            <div className="min-w-0 flex-1 leading-tight">
+              <div className="truncate font-display text-[13.5px] font-semibold">
+                Rumik
+              </div>
+              <div className="truncate text-[11px] text-muted-foreground">
+                {ws}
+              </div>
+            </div>
+            <CaretUpDown
+              size={14}
+              className="text-muted-foreground/75 shrink-0"
+            />
+          </button>
+          {wsOpen ? (
+            <div
+              role="menu"
+              className="absolute left-3 right-3 top-[calc(100%+4px)] z-20 rounded-lg border border-border bg-background p-1.5 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.25)] pop-in"
+            >
+              <div className="px-2 pb-1.5 pt-1 font-display text-[10.5px] font-medium tracking-tight text-muted-foreground/80">
+                Switch workspace
+              </div>
+              {workspaces.map((w) => {
+                const active = w.name === ws;
                 return (
-                  <li key={item.to}>
-                    <Link
-                      to={item.to}
-                      aria-current={active ? "page" : undefined}
-                      className={`group relative flex items-center gap-2.5 rounded-md px-3 py-[7px] text-[13px] transition-all duration-150 ${
-                        active
-                          ? "bg-[var(--sidebar-accent)] text-foreground"
-                          : "text-muted-foreground hover:bg-[var(--sidebar-accent)]/60 hover:text-foreground"
-                      }`}
-                    >
-                      <Icon
-                        size={15}
-                        className={`transition-colors ${active ? "text-foreground" : "text-muted-foreground/75 group-hover:text-foreground"}`}
-                      />
-                      <span className="flex-1 truncate">{item.label}</span>
-                    </Link>
-                  </li>
+                  <button
+                    key={w.name}
+                    role="menuitem"
+                    onClick={() => {
+                      workspaceStore.setWorkspace(w.name as WorkspaceType);
+                      setWsOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-[var(--inset)] active:scale-[0.98]"
+                  >
+                    <span className="grid h-6 w-6 place-items-center rounded bg-[var(--inset)] text-muted-foreground">
+                      <Building size={14} />
+                    </span>
+                    <span className="min-w-0 flex-1 leading-tight">
+                      <span className="block truncate text-[12.5px] text-foreground">
+                        {w.name}
+                      </span>
+                      <span className="block truncate text-[10.5px] text-muted-foreground">
+                        {w.hint}
+                      </span>
+                    </span>
+                    {active ? (
+                      <Check size={14} className="text-foreground shrink-0" />
+                    ) : null}
+                  </button>
                 );
               })}
-            </ul>
-          </div>
-        ))}
-      </nav>
+            </div>
+          ) : null}
+        </div>
 
-      <div className="hairline-t mx-3 mb-3 mt-1 flex items-center gap-2.5 rounded-md border-0 px-2 py-2.5">
-        <div className="grid h-7 w-7 place-items-center rounded-full bg-foreground/90 text-[11px] font-semibold text-background">
-          S
-        </div>
-        <div className="min-w-0 flex-1 leading-tight">
-          <div className="truncate text-[12.5px] font-medium">Shred</div>
-          <div className="truncate text-[11px] text-muted-foreground">
-            shred@rumik.ai
+        <nav className="mt-2 flex-1 overflow-y-auto px-3 pb-6 fade-mask-y animate-fade-in">
+          {NAV.map((group) => (
+            <div key={group.label} className="mb-5">
+              <div className="px-3 pb-2 pt-3 font-display text-[11px] font-medium tracking-tight text-muted-foreground/70">
+                {group.label}
+              </div>
+              <ul className="space-y-0.5">
+                {group.items.map((item) => {
+                  const active =
+                    item.to === "/"
+                      ? pathname === "/"
+                      : pathname === item.to ||
+                        pathname.startsWith(item.to + "/");
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.to}>
+                      <Link
+                        to={item.to}
+                        aria-current={active ? "page" : undefined}
+                        className={`group relative flex items-center gap-2.5 rounded-md px-3 py-[7px] text-[13px] transition-all duration-150 ${
+                          active
+                            ? "bg-[var(--sidebar-accent)] text-foreground"
+                            : "text-muted-foreground hover:bg-[var(--sidebar-accent)]/60 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon
+                          size={15}
+                          className={`transition-colors ${active ? "text-foreground" : "text-muted-foreground/75 group-hover:text-foreground"}`}
+                        />
+                        <span className="flex-1 truncate">{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
+
+        <div className="hairline-t mx-3 mb-3 mt-1 flex items-center gap-2.5 rounded-md border-0 px-2 py-2.5">
+          <div className="grid h-7 w-7 place-items-center rounded-full bg-foreground/90 text-[11px] font-semibold text-background">
+            S
           </div>
+          <div className="min-w-0 flex-1 leading-tight">
+            <div className="truncate text-[12.5px] font-medium">Shred</div>
+            <div className="truncate text-[11px] text-muted-foreground">
+              shred@rumik.ai
+            </div>
+          </div>
+          <span className="rounded-full bg-[var(--success-soft)] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider text-[var(--success)]">
+            Pro
+          </span>
         </div>
-        <span className="rounded-full bg-[var(--success-soft)] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold uppercase tracking-wider text-[var(--success)]">
-          Pro
-        </span>
-      </div>
-    </aside>
+
+        {/* Mobile close button */}
+        <button
+          onClick={onClose}
+          aria-label="Close sidebar"
+          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-md text-muted-foreground hover:bg-[var(--sidebar-accent)] hover:text-foreground transition-colors active:scale-[0.96] md:hidden"
+        >
+          <X size={16} />
+        </button>
+      </aside>
+    </>
   );
 }
 
 /* ─── Topbar Component ─── */
-function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
+function Topbar({
+  onSearchClick,
+  onMenuClick,
+}: {
+  onSearchClick: () => void;
+  onMenuClick: () => void;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [notifOpen, setNotifOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement | null>(null);
@@ -338,19 +387,29 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
     )?.label ?? "Overview";
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-3 bg-background/80 px-8 backdrop-blur-md hairline-b">
-      <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-        <span>Rumik</span>
-        <span className="text-border">/</span>
-        <span className="font-display text-foreground">{crumb}</span>
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-2 bg-background/80 px-4 md:px-8 backdrop-blur-md hairline-b safe-area-top">
+      {/* Mobile hamburger */}
+      <button
+        onClick={onMenuClick}
+        aria-label="Open menu"
+        className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground transition-colors active:scale-[0.96] md:hidden"
+      >
+        <List size={18} />
+      </button>
+
+      {/* Breadcrumb — compact on mobile */}
+      <div className="flex items-center gap-2 text-[13px] text-muted-foreground min-w-0">
+        <span className="hidden sm:inline">Rumik</span>
+        <span className="hidden sm:inline text-border">/</span>
+        <span className="font-display text-foreground truncate">{crumb}</span>
       </div>
 
-      {/* Interactive search bar trigger */}
+      {/* Desktop search bar trigger */}
       <button
         onClick={onSearchClick}
         aria-label="Search and navigate"
         aria-haspopup="dialog"
-        className="ml-6 flex h-8 items-center gap-2 rounded-md px-2.5 text-[12.5px] text-muted-foreground bg-[var(--inset)] hover:bg-[var(--inset)]/75 transition-colors text-left w-[280px] active:scale-[0.99]"
+        className="hidden md:flex ml-6 h-8 items-center gap-2 rounded-md px-2.5 text-[12.5px] text-muted-foreground bg-[var(--inset)] hover:bg-[var(--inset)]/75 transition-colors text-left w-[280px] active:scale-[0.99]"
       >
         <MagnifyingGlass
           size={14}
@@ -367,7 +426,17 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
         </span>
       </button>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      {/* Mobile search icon */}
+      <button
+        onClick={onSearchClick}
+        aria-label="Search and navigate"
+        aria-haspopup="dialog"
+        className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground transition-colors active:scale-[0.96] md:hidden"
+      >
+        <MagnifyingGlass size={16} />
+      </button>
+
+      <div className="ml-auto flex items-center gap-1.5 md:ml-0">
         {/* Local notifications popover container */}
         <div ref={bellRef} className="relative">
           <button
@@ -386,7 +455,7 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
 
           {/* Local Popover Panel */}
           {notifOpen && (
-            <div className="absolute right-0 mt-2 z-40 w-80 rounded-lg border border-border bg-background p-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.16)] pop-in">
+            <div className="absolute right-0 mt-2 z-40 w-[calc(100vw-2rem)] max-w-80 rounded-lg border border-border bg-background p-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.16)] pop-in">
               <NotificationPanel onClose={() => setNotifOpen(false)} />
             </div>
           )}

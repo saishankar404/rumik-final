@@ -351,7 +351,7 @@ function Overview() {
       {isLoading || !metrics ? (
         <>
           {/* KPI skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-16 pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 sm:gap-10 md:gap-16 pb-6">
             <SkeletonCard />
             <div className="space-y-4 lg:border-l lg:border-border lg:pl-10">
               <SkeletonCard />
@@ -360,7 +360,7 @@ function Overview() {
           </div>
 
           {/* Activity / Models skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-16 border-t border-border/40">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-6 sm:gap-10 md:gap-16 border-t border-border/40">
             <div className="border-b border-border/30 pb-12 lg:border-b-0 lg:border-r lg:border-border/30 lg:pr-12 py-12">
               <Skeleton className="mb-7 h-4 w-32" />
               <div className="-mx-3 space-y-0.5">
@@ -381,7 +381,7 @@ function Overview() {
         </>
       ) : (
         <div className="animate-fade-in">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-16 pb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 sm:gap-10 md:gap-16 pb-6">
             <div>
               <div className="eyebrow-label">Active balance</div>
               <div className="mt-3 flex items-baseline gap-2.5">
@@ -429,7 +429,7 @@ function Overview() {
           </div>
 
           {/* Side-by-side Split layout for Recent Activity and Top Models */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-16 border-t border-border/40">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-6 sm:gap-10 md:gap-16 border-t border-border/40">
             {/* Left Side: Recent Activity */}
             <div
               aria-label="Recent activity"

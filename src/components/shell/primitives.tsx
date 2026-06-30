@@ -12,14 +12,14 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="flex items-end justify-between gap-8 pb-12">
+    <header className="flex items-end justify-between gap-4 sm:gap-8 pb-8 md:pb-12">
       <div className="min-w-0 animate-fade-in">
         {eyebrow ? <div className="eyebrow-label mb-3">{eyebrow}</div> : null}
-        <h1 className="font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.025em] text-foreground">
+        <h1 className="font-display text-[22px] sm:text-[26px] md:text-[30px] font-semibold leading-[1.1] tracking-[-0.025em] text-foreground">
           {title}
         </h1>
         {subtitle ? (
-          <p className="mt-2.5 max-w-xl text-[13.5px] leading-relaxed text-muted-foreground">
+          <p className="mt-2.5 max-w-xl text-[13px] sm:text-[13.5px] leading-relaxed text-muted-foreground">
             {subtitle}
           </p>
         ) : null}
@@ -46,9 +46,9 @@ export function Section({
 }) {
   return (
     <section
-      className={`py-12 first:pt-2 hairline-b last:border-b-0 ${className}`}
+      className={`py-8 md:py-12 first:pt-2 hairline-b last:border-b-0 ${className}`}
     >
-      <div className="mb-7 flex items-baseline justify-between gap-6">
+      <div className="mb-5 md:mb-7 flex items-baseline justify-between gap-4 md:gap-6">
         <div className="min-w-0">
           <h2 className="font-display text-[15px] font-medium tracking-[-0.01em] text-foreground">
             {title}

@@ -179,6 +179,18 @@
   :focus:not(:focus-visible) {
     outline: none;
   }
+
+  /* Mobile viewport height — handles iOS/Android browser chrome */
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+
+  /* Prevent double-tap zoom on interactive elements */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"] {
+    touch-action: manipulation;
+  }
 }
 
 @utility fade-mask-b {
@@ -463,4 +475,13 @@ input[type="range"]::-webkit-slider-thumb:active {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Mobile safe area — iOS notch / Android nav bar */
+@utility safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
 }
