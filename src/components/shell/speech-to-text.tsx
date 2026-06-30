@@ -196,7 +196,7 @@ function UploadCardBase({
   return (
     <div
       className={cn(
-        "relative flex min-h-[120px] items-center justify-center rounded-xl border-2 border-dashed p-6 transition-colors duration-200",
+        "relative flex min-h-[120px] items-center justify-center rounded-xl border-2 border-dashed p-6 transition-colors duration-150",
         isDragOver
           ? "border-foreground/40 bg-[var(--inset)]/60 shadow-inner"
           : isUploading
@@ -211,7 +211,7 @@ function UploadCardBase({
           <Upload
             size={48}
             className={cn(
-              "transition-colors duration-200",
+              "transition-colors duration-150",
               isDragOver ? "text-foreground" : "text-muted-foreground/40",
               isUploading && "text-foreground",
             )}
@@ -309,7 +309,7 @@ function AudioComponent({
             <button
               onClick={handleRemove}
               aria-label="Remove uploaded file"
-              className="absolute -right-2 -top-2 z-30 grid h-5 w-5 place-items-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:scale-110"
+              className="absolute -right-2 -top-2 z-30 grid h-5 w-5 place-items-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 hover:scale-110"
             >
               <X size={12} />
             </button>

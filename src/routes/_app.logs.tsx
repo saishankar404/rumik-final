@@ -572,7 +572,7 @@ function Logs() {
                   hasActiveFilters ? (
                     <button
                       onClick={clearFilters}
-                      className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-100 animate-fade-in"
+                      className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 animate-fade-in"
                     >
                       Clear filters
                     </button>
@@ -621,7 +621,7 @@ function Logs() {
             <Block title="Request payload body">
               <div className="relative">
                 <div
-                  className={`rounded-md bg-[var(--inset)] p-3 font-mono text-[11.5px] leading-relaxed text-foreground/85 transition-all duration-200 overflow-x-auto ${
+                  className={`rounded-md bg-[var(--inset)] p-3 font-mono text-[11.5px] leading-relaxed text-foreground/85 transition-all duration-150 overflow-x-auto ${
                     codeExpanded
                       ? "max-h-none"
                       : "max-h-[135px] overflow-hidden"
@@ -643,7 +643,7 @@ function Logs() {
                     <button
                       type="button"
                       onClick={() => setCodeExpanded(true)}
-                      className="absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded bg-foreground px-2.5 py-1 text-[11.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-75 shadow-sm"
+                      className="absolute bottom-2.5 left-1/2 -translate-x-1/2 rounded bg-foreground px-2.5 py-1 text-[11.5px] font-semibold text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 shadow-sm"
                     >
                       More
                     </button>

@@ -177,7 +177,7 @@ function Models() {
                 return (
                   <div
                     key={m.id}
-                    className="flex flex-col items-center gap-2.5 flex-1 max-w-[124px] group/bar transition-all duration-200 group-hover/chart:opacity-40 hover:!opacity-100 hover:scale-[1.03] relative cursor-pointer"
+                    className="flex flex-col items-center gap-2.5 flex-1 max-w-[124px] group/bar transition-all duration-150 group-hover/chart:opacity-40 hover:!opacity-100 hover:scale-[1.03] relative cursor-pointer"
                   >
                     {/* Premium Hover Tooltip Details */}
                     <div className="absolute bottom-[calc(100%+30px)] left-1/2 -translate-x-1/2 z-20 w-36 scale-95 opacity-0 pointer-events-none rounded-lg border border-border bg-background p-2.5 shadow-lg group-hover/bar:scale-100 group-hover/bar:opacity-100 transition-all duration-150">
@@ -199,7 +199,7 @@ function Models() {
                     </div>
 
                     {/* Cost Label */}
-                    <span className="font-display text-[12.5px] font-semibold text-foreground tabular-nums transition-transform duration-100 group-hover/bar:-translate-y-0.5">
+                    <span className="font-display text-[12.5px] font-semibold text-foreground tabular-nums transition-transform duration-150 group-hover/bar:-translate-y-0.5">
                       ₹{Math.round(totalCost).toLocaleString()}
                     </span>
 
@@ -321,7 +321,7 @@ function Models() {
                 <button
                   onClick={() => setPlayingId(isPlaying ? null : m.id)}
                   aria-label={isPlaying ? "Pause sample" : "Play sample"}
-                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-100 hover:scale-105 active:scale-95"
+                  className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-150 hover:scale-105 active:scale-95"
                 >
                   {isPlaying ? (
                     <Pause

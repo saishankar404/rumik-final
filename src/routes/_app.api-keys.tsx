@@ -187,7 +187,7 @@ function ApiKeys() {
         actions={
           <button
             onClick={() => setCreateOpen(true)}
-            className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-100 animate-fade-in"
+            className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 animate-fade-in"
           >
             <Plus size={14} weight="bold" />
             New key
@@ -239,7 +239,7 @@ function ApiKeys() {
               action={
                 <button
                   onClick={() => setCreateOpen(true)}
-                  className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-100 animate-fade-in"
+                  className="inline-flex items-center gap-2 rounded-md bg-foreground px-3.5 py-2 text-[13px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150 animate-fade-in"
                 >
                   <Plus size={14} weight="bold" />
                   New key
@@ -290,7 +290,7 @@ function ApiKeys() {
                               ? "Copied"
                               : `Copy ${k.name} key prefix`
                           }
-                          className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-100 transition-all"
+                          className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-150 transition-all"
                         >
                           {copiedName === k.name ? (
                             "Copied!"
@@ -393,7 +393,7 @@ function ApiKeys() {
                               ? "Copied"
                               : `Copy ${k.name} key prefix`
                           }
-                          className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-100 transition-all"
+                          className="flex items-center justify-center rounded px-1.5 py-0.5 text-[11px] text-muted-foreground hover:bg-[var(--inset)] hover:text-foreground active:scale-[0.96] duration-150 transition-all"
                         >
                           {copiedName === k.name ? (
                             "Copied!"
@@ -505,13 +505,13 @@ function ApiKeys() {
               <button
                 type="button"
                 onClick={() => setCreateOpen(false)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-[12.5px] font-medium text-foreground hover:bg-[var(--inset)] active:scale-[0.96] transition-transform duration-75"
+                className="rounded-md border border-border bg-background px-3 py-1.5 text-[12.5px] font-medium text-foreground hover:bg-[var(--inset)] active:scale-[0.96] transition-transform duration-150"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-foreground px-3 py-1.5 text-[12.5px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-75"
+                className="rounded-md bg-foreground px-3 py-1.5 text-[12.5px] font-medium text-background hover:bg-foreground/90 active:scale-[0.96] transition-transform duration-150"
               >
                 Create key
               </button>
@@ -628,7 +628,7 @@ function Dialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-200 animate-fade-in"
+        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-fade-in"
       />
       <div
         ref={modalRef}

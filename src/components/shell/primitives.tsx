@@ -166,7 +166,7 @@ export function Sparkline({
           <span
             key={i}
             onMouseEnter={() => onHover?.(v, i)}
-            className="w-[4px] rounded-sm bg-foreground/30 hover:bg-foreground hover:scale-y-125 transition-all duration-100 cursor-pointer origin-bottom"
+            className="w-[4px] rounded-sm bg-foreground/30 hover:bg-foreground hover:scale-y-125 transition-all duration-150 cursor-pointer origin-bottom"
             style={{ height: `${pct}%`, minHeight: "2px" }}
           />
         );

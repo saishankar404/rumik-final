@@ -134,7 +134,7 @@ function Dialog({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-200 animate-fade-in"
+        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-fade-in"
       />
       {/* Centered Modal Card */}
       <div
@@ -499,6 +499,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
         />
         <button
           onClick={onClose}
+          aria-label="Close"
           className="rounded p-1 text-muted-foreground/60 hover:bg-[var(--inset)] hover:text-foreground"
         >
           <X size={15} />
@@ -521,7 +522,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
                 item.action();
                 onClose();
               }}
-              className={`flex w-full items-center gap-3.5 rounded-lg px-4 py-3 text-left text-[15px] transition-colors duration-75 active:scale-[0.99] ${
+              className={`flex w-full items-center gap-3.5 rounded-lg px-4 py-3 text-left text-[15px] transition-colors duration-150 active:scale-[0.99] ${
                 idx === activeIndex
                   ? "bg-[var(--inset)]"
                   : "hover:bg-[var(--inset)]"
@@ -583,7 +584,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
         {notifs.map((n, idx) => (
           <div
             key={idx}
-            className="p-2.5 hover:bg-[var(--inset)] rounded-md transition-colors duration-75"
+            className="p-2.5 hover:bg-[var(--inset)] rounded-md transition-colors duration-150"
           >
             <div className="flex items-baseline justify-between gap-4">
               <span className="font-display text-[12.5px] font-semibold text-foreground">

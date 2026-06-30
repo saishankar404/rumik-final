@@ -630,7 +630,7 @@ function Playground() {
                     ? "Switch to text to speech"
                     : "Switch to speech to text"
                 }
-                className={`relative rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-200 ${
+                className={`relative rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-150 ${
                   mode === m
                     ? "text-background"
                     : "text-muted-foreground hover:text-foreground"
@@ -662,7 +662,7 @@ function Playground() {
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
             >
               {/* Editor card — no border glow on focus */}
-              <div className="mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-200">
+              <div className="mx-10 mt-6 rounded-xl border border-border/60 transition-colors duration-150">
                 {/* Textarea */}
                 <div className="px-5 pt-5">
                   <textarea
@@ -718,7 +718,7 @@ function Playground() {
                     <button
                       onClick={handleSynthesize}
                       disabled={isEmpty || isGenerating}
-                      className={`relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 text-[13.5px] font-medium transition-all duration-150 active:scale-[0.97] disabled:cursor-not-allowed ${
+                      className={`relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 text-[13.5px] font-medium transition-all duration-150 active:scale-[0.96] disabled:cursor-not-allowed ${
                         isDone
                           ? "bg-[var(--success)] text-white disabled:opacity-100"
                           : "bg-foreground text-background hover:bg-foreground/88 disabled:opacity-35"
@@ -768,7 +768,7 @@ function Playground() {
                           <button
                             key={sl}
                             onClick={() => loadStarter(sample)}
-                            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3.5 py-1.5 text-[13.5px] text-foreground transition-all duration-100 hover:border-border hover:bg-[var(--inset)] active:scale-[0.97]"
+                            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3.5 py-1.5 text-[13.5px] text-foreground transition-all duration-150 hover:border-border hover:bg-[var(--inset)] active:scale-[0.96]"
                           >
                             <Icon
                               className="h-4 w-4 text-muted-foreground shrink-0"
@@ -997,7 +997,7 @@ function Playground() {
                     </span>
                     {" credits remaining"}
                   </span>
-                  <button className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-[13.5px] font-medium text-background transition-all duration-150 hover:bg-foreground/88 active:scale-[0.97]">
+                  <button className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-[13.5px] font-medium text-background transition-all duration-150 hover:bg-foreground/88 active:scale-[0.96]">
                     <Play className="h-3.5 w-3.5" fill="currentColor" />
                     Transcribe
                   </button>
@@ -1321,7 +1321,7 @@ function SliderField({
           />
           {/* Thumb */}
           <div
-            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full bg-background border-2 border-foreground shadow-[0_1px_4px_rgba(0,0,0,0.18)] transition-[width,height] duration-75 ${
+            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full bg-background border-2 border-foreground shadow-[0_1px_4px_rgba(0,0,0,0.18)] transition-[width,height] duration-150 ${
               dragging
                 ? "h-[18px] w-[18px]"
                 : "h-[14px] w-[14px] group-hover:h-[16px] group-hover:w-[16px]"
@@ -1383,12 +1383,13 @@ function ExperimentsPanel({
         return (
           <div
             key={exp.id}
-            className={`group flex items-start gap-3 px-5 py-4 hover:bg-[var(--inset)] transition-colors duration-100 border-b border-border/40 last:border-b-0 ${
+            className={`group flex items-start gap-3 px-5 py-4 hover:bg-[var(--inset)] transition-colors duration-150 border-b border-border/40 last:border-b-0 ${
               exp.isNew ? "animate-fade-in" : ""
             }`}
           >
             <button
               onClick={() => setPlayingId(playing ? null : exp.id)}
+              aria-label={playing ? "Pause audio" : "Play audio"}
               className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform duration-150 hover:scale-105 active:scale-95"
             >
               {playing ? (
@@ -1445,7 +1446,10 @@ function ExperimentsPanel({
               >
                 Load
               </button>
-              <button className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground transition-colors">
+              <button
+                aria-label="Download audio"
+                className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <Download className="h-3 w-3" />
               </button>
             </div>

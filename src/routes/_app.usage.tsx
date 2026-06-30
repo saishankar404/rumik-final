@@ -232,7 +232,7 @@ function Usage() {
                     setRange(r);
                     setCustomRange(null);
                   }}
-                  className={`rounded-[5px] px-2.5 py-1 text-[12px] transition-all duration-100 ${
+                  className={`rounded-[5px] px-2.5 py-1 text-[12px] transition-all duration-150 ${
                     range === r && !customRange
                       ? "bg-background text-foreground shadow-[0_0_0_1px_var(--border)] font-medium active:scale-[0.98]"
                       : "text-muted-foreground hover:text-foreground"
@@ -558,6 +558,7 @@ function Usage() {
               <button
                 type="button"
                 onClick={() => setCalendarOpen(false)}
+                aria-label="Close"
                 className="rounded p-1 text-muted-foreground/60 hover:bg-[var(--inset)] hover:text-foreground"
               >
                 <X size={14} />
@@ -668,7 +669,7 @@ function Usage() {
               <button
                 type="button"
                 onClick={() => setCalendarOpen(false)}
-                className="rounded-md border border-border px-3 py-1.5 text-[12.5px] font-medium text-foreground hover:bg-[var(--inset)] active:scale-[0.97]"
+                className="rounded-md border border-border px-3 py-1.5 text-[12.5px] font-medium text-foreground hover:bg-[var(--inset)] active:scale-[0.96]"
               >
                 Cancel
               </button>
@@ -684,7 +685,7 @@ function Usage() {
                   }
                   setCalendarOpen(false);
                 }}
-                className="rounded-md bg-foreground text-background px-4 py-1.5 text-[12.5px] font-semibold hover:bg-foreground/90 active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="rounded-md bg-foreground text-background px-4 py-1.5 text-[12.5px] font-semibold hover:bg-foreground/90 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Apply range
               </button>
@@ -719,7 +720,7 @@ function Dialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-200 animate-page-fade"
+        className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity duration-150 animate-page-fade"
       />
       <div
         ref={ref}
