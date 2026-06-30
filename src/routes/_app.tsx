@@ -42,10 +42,20 @@ function AppShell() {
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-[13px] focus:font-medium focus:shadow-lg focus:border focus:border-border"
+      >
+        Skip to content
+      </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onSearchClick={() => setCmdOpen(true)} />
-        <main className="relative flex-1 flex flex-col">
+        <main
+          id="main-content"
+          role="main"
+          className="relative flex-1 flex flex-col"
+        >
           <NoiseOverlay />
           {isPlayground ? (
             <div className="flex-1 min-h-0 flex flex-col animate-page-fade">
@@ -135,10 +145,16 @@ function Sidebar() {
   ];
 
   return (
-    <aside className="sticky top-0 flex h-screen w-[244px] shrink-0 flex-col bg-[var(--sidebar)] hairline-b border-b-0 border-r">
+    <aside
+      role="navigation"
+      aria-label="Main navigation"
+      className="sticky top-0 flex h-screen w-[244px] shrink-0 flex-col bg-[var(--sidebar)] hairline-b border-b-0 border-r"
+    >
       <div ref={wsRef} className="relative px-3 pt-3">
         <button
           onClick={() => setWsOpen((v) => !v)}
+          aria-haspopup="menu"
+          aria-expanded={wsOpen}
           className="flex w-full items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-[var(--sidebar-accent)]/70 animate-fade-in"
         >
           <div className="grid h-7 w-7 place-items-center rounded-md bg-foreground text-background">
@@ -164,7 +180,10 @@ function Sidebar() {
           />
         </button>
         {wsOpen ? (
-          <div className="absolute left-3 right-3 top-[calc(100%+4px)] z-20 rounded-lg border border-border bg-background p-1.5 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.25)] pop-in">
+          <div
+            role="menu"
+            className="absolute left-3 right-3 top-[calc(100%+4px)] z-20 rounded-lg border border-border bg-background p-1.5 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.25)] pop-in"
+          >
             <div className="px-2 pb-1.5 pt-1 font-display text-[10.5px] font-medium tracking-tight text-muted-foreground/80">
               Switch workspace
             </div>
@@ -173,6 +192,7 @@ function Sidebar() {
               return (
                 <button
                   key={w.name}
+                  role="menuitem"
                   onClick={() => {
                     workspaceStore.setWorkspace(w.name as WorkspaceType);
                     setWsOpen(false);
@@ -218,6 +238,7 @@ function Sidebar() {
                   <li key={item.to}>
                     <Link
                       to={item.to}
+                      aria-current={active ? "page" : undefined}
                       className={`group relative flex items-center gap-2.5 rounded-md px-3 py-[7px] text-[13px] transition-all duration-150 ${
                         active
                           ? "bg-[var(--sidebar-accent)] text-foreground"
@@ -300,6 +321,8 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
       {/* Interactive search bar trigger */}
       <button
         onClick={onSearchClick}
+        aria-label="Search and navigate"
+        aria-haspopup="dialog"
         className="ml-6 flex h-8 items-center gap-2 rounded-md px-2.5 text-[12.5px] text-muted-foreground bg-[var(--inset)] hover:bg-[var(--inset)]/75 transition-colors text-left w-[280px] active:scale-[0.99]"
       >
         <MagnifyingGlass
@@ -322,6 +345,9 @@ function Topbar({ onSearchClick }: { onSearchClick: () => void }) {
         <div ref={bellRef} className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
+            aria-label="Notifications"
+            aria-haspopup="true"
+            aria-expanded={notifOpen}
             className={`grid h-8 w-8 place-items-center rounded-md transition-colors active:scale-[0.96] ${
               notifOpen
                 ? "bg-[var(--inset)] text-foreground"
@@ -478,6 +504,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
         </span>
         <button
           onClick={onClose}
+          aria-label="Close"
           className="rounded p-0.5 text-muted-foreground/60 hover:bg-[var(--inset)] hover:text-foreground"
         >
           <X size={13} />
